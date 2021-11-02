@@ -1,0 +1,6 @@
+Error type A at Line 5: too many chars
+Error type A at Line 9: number start with 0
+Error type A at Line 10: int number overflow 
+Error type A at Line 12: too many 0 at the beginning of hexadecimal representation 
+Error type A at Line 13: hexadecimal int with illegal char
+Error type A at Line 14: int number overflow 

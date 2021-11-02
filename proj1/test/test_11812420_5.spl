@@ -1,0 +1,24 @@
+int test_func_1({
+    int temp;
+    temp = '2';
+}
+
+
+int main(){
+    int a = 0xe8g;
+    int x = test_func_1(a b);
+
+    if (a == 0
+    {
+        a = 0;
+    }
+    else{
+        a = x;
+    }
+
+    if (a == 0
+    {
+        a = 0;
+    }
+    return a==x;
+}
