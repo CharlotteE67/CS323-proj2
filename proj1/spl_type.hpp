@@ -11,15 +11,16 @@ enum class CATEGORY {
     PRIMITIVE, ARRAY, STRUCTURE
 };
 
+class Type;
 
 class Array;
 
 class FieldList;
 
 union dTypes {
-    enum Node_TYPE nodeType;
-    Array* Array ;
-    FieldList* FieldList;
+    enum Node_TYPE nt;
+    Array* arr;
+    FieldList* fl;
 };
 
 class Type {
