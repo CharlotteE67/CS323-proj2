@@ -8,7 +8,7 @@
 using namespace std;
 
 enum class CATEGORY {
-    PRIMITIVE, ARRAY, STRUCTURE, FUNCTION
+    PRIMITIVE, ARRAY, STRUCTURE
 };
 
 
@@ -28,11 +28,6 @@ public:
     CATEGORY category = CATEGORY::PRIMITIVE;
     dTypes type;
     Type *returnType = nullptr; // 存储返回值的类型
-
-    static Type *getPrimitiveType(Node_TYPE type);
-    static Type *getPrimitiveINT();
-    static Type *getPrimitiveFLOAT();
-    static Type *getPrimitiveCHAR();
 
     Type() = default;
     Type(string _name, CATEGORY _category, dTypes _type);
