@@ -26,7 +26,7 @@ class Type {
 public:
     string name;
     CATEGORY category = CATEGORY::PRIMITIVE;
-    dTypes type
+    dTypes type;
     Type *returnType = nullptr; // 存储返回值的类型
 
     static Type *getPrimitiveType(Node_TYPE type);
