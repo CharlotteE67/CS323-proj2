@@ -1,4 +1,4 @@
-#include "type.hpp"
+#include "spl_type.hpp"
 
 Type::Type(string _name, CATEGORY _category, dTypes _type):
         name(std::move(_name)),
