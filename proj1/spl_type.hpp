@@ -11,6 +11,7 @@ enum class CATEGORY {
     PRIMITIVE, ARRAY, STRUCTURE
 };
 
+class Type;
 
 class Array;
 
