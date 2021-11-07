@@ -16,8 +16,9 @@ class Array;
 
 class FieldList;
 
+enum Primitive{INT,FLOAT,CHAR};
 union dTypes {
-    enum Node_TYPE nodeType;
+    Primitive pri;
     Array* Array ;
     FieldList* FieldList;
 };
@@ -30,7 +31,17 @@ public:
     Type *returnType = nullptr; // 存储返回值的类型
 
     Type() = default;
-    Type(string _name, CATEGORY _category, dTypes _type);
+    Type(string name, string pri): name(name) {
+        if(pri == "int"){type.pri = Primitive::INT;}
+        else if(pri=="float"){type.pri = Primitive::FLOAT;}
+        else if(pri == "char"){type.pri = Primitive::CHAR;} 
+    }
+    Type(string name, Array* arr): name(name), category(CATEGORY::ARRAY){
+        type.Array = arr;
+    }
+    Type(string name, FieldList* fl): name(name), category(CATEGORY::STRUCTURE){
+        type.FieldList = fl;
+    }
 
 };
 
