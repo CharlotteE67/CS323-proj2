@@ -12,7 +12,11 @@ string defGetTypeName(Node* def){
     Node* type = def->child[0]->child[0];
     return type->get_name();
 }
-
+/* def -> Specifier -> StructSpecifier -> STRUCT ID LC DefList RC | STRUCT ID */
+string defGetStructName(Node *def){
+    Node* stuID = def->child[0]->child[0]->child[1];
+    return stuID->get_name();
+}
 /* VarDec:ID
 *    | VarDec LB INT RB
 */
@@ -64,7 +68,38 @@ void defPrimitiveType(Node *def){
     }
 
 }
-void defStructType(Node *def){}
+void defStructType(Node *def){
+    Node *decList = def->child[1];
+    string structName = defGetStructName(def);
+
+    while(true){
+        Node * varDec = decListGetVarDec(decList);
+        string varName = vardecGetName(varDec);
+        
+        if(symbolTable.count(varName)==1){
+            //check data type
+        }
+        if(varDec->child.size()==1){
+            //vardec -> id
+            symbolTable[varName] = symbolTable[structName];
+        }else{
+            //array type
+            Type* base = symbolTable[structName];
+            while(varDec->child.size()!=1){
+                int arrSize = varDec->child[2]->get_intVal();
+                Array* arr = new Array(base,arrSize);
+                Type* upper = new Type(varName,arr);
+                base = upper;
+                varDec = varDec->child[0];
+            }
+            symbolTable[varName] = base;
+        }
+
+        if(decList->child.size()==1){break;}
+        decList = decList->child[2];
+    }
+
+}
 /* Def -> enter 
     local var
 */
