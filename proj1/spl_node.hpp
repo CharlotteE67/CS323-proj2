@@ -28,11 +28,11 @@ private:
         float float_value;
         char char_value;
     };
-    vector <Node*> child;
+    
 
 
 public:
-    
+    vector <Node*> child;
     Node();
 
     void print(int depth);
@@ -49,6 +49,8 @@ public:
     void set_child(vector<Node*>&);
 
     void show(int depth);
+
+    string get_name(){return name;}
 
 };
 

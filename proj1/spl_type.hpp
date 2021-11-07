@@ -18,8 +18,8 @@ class FieldList;
 
 union dTypes {
     enum Node_TYPE nodeType;
-    Array Array*;
-    FieldList FieldList*;
+    Array* Array ;
+    FieldList* FieldList;
 };
 
 class Type {
