@@ -64,14 +64,14 @@ void defPrimitiveType(Node *def){
     }
 
 }
-
+void defStructType(Node *def){}
 /* Def -> enter 
     local var
 */
 void defVisit(Node *def){
     if(defGetTypeName(def)=="StructSpecifier"){
         //struct
-        
+        defStructType(def);
     }else{
         defPrimitiveType(def);
     }
@@ -88,7 +88,31 @@ void defVisit(Node *def){
    ExtDecList -> VarDec
         | VarDec COMMA ExtDecList */
 void extDef_SES(Node *def){
-    
+    Node *extDec = def->child[1];
+    string dataType = defGetTypeName(def);
+    while(true){
+        Node *varDec = extDec->child[0];
+        string varName = vardecGetName(varDec);
+        if(symbolTable.count(varName)==1){
+            //redefine
+        }
+        if(varDec->child.size()==1){
+            symbolTable[varName] = new Type(varName,dataType);
+        }else{
+            //array type
+            Type* base = new Type(varName,dataType);
+            while(varDec->child.size()!=1){
+                int arrSize = varDec->child[2]->get_intVal();
+                Array* arr = new Array(base,arrSize);
+                Type* upper = new Type(varName,arr);
+                base = upper;
+                varDec = varDec->child[0];
+            }
+            symbolTable[varName] = base;
+        }
+        if(extDec->child.size()==1){break;}
+        extDec = extDec->child[2];
+    }
 
 }
 
