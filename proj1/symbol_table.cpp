@@ -1,7 +1,4 @@
-#include <string>
-#include <map>
 #include "symbol_table.hpp"
-#include "spl_type.hpp"
 
 map<string, Type*> symbolTable;
 static map <string,Type*> strToType = {};

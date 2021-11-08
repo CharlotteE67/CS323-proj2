@@ -3,13 +3,13 @@
 
 #include <string>
 #include <vector>
-#include "spl_node.hpp"
 
 using namespace std;
 
 enum class CATEGORY {
     PRIMITIVE, ARRAY, STRUCTURE
 };
+enum class Primitive{INT,FLOAT,CHAR};
 
 class Type;
 
@@ -17,32 +17,26 @@ class Array;
 
 class FieldList;
 
-enum Primitive{INT,FLOAT,CHAR};
 union dTypes {
     Primitive pri;
-    Array* Array ;
-    FieldList* FieldList;
+    Array* arr;
+    FieldList* fl;
 };
 
 class Type {
 public:
     string name;
-    CATEGORY category = CATEGORY::PRIMITIVE;
+    CATEGORY category;
     dTypes type;
-    Type *returnType = nullptr; // 存储返回值的类型
+    Type *returnType; // 存储返回值的类型
 
-    Type() = default;
-    Type(string name, string pri): name(name) {
-        if(pri == "int"){type.pri = Primitive::INT;}
-        else if(pri=="float"){type.pri = Primitive::FLOAT;}
-        else if(pri == "char"){type.pri = Primitive::CHAR;} 
-    }
-    Type(string name, Array* arr): name(name), category(CATEGORY::ARRAY){
-        type.Array = arr;
-    }
-    Type(string name, FieldList* fl): name(name), category(CATEGORY::STRUCTURE){
-        type.FieldList = fl;
-    }
+    Type();
+
+    Type(string name, string pri);
+
+    Type(string name, Array* arr);
+
+    Type(string name, FieldList* fl);
 
 };
 
@@ -57,13 +51,14 @@ public:
 class FieldList {
 public:
     string name;
-    Type *type = nullptr;
-    FieldList *next = nullptr;
+    Type *type;
+    FieldList *next;
 
-    FieldList() = default;
+    FieldList();
 
     FieldList(string name, Type *type, FieldList *next);
 
 };
+
 
 #endif

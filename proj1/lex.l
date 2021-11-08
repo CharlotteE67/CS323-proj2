@@ -12,7 +12,6 @@
     #define EXIT_OK 0
     #define EXIT_FAIL 1
 
-    #include"syntax.tab.h"
     /* library inclusions */ 
     int yycolumn = 1;
     #define YY_USER_ACTION \

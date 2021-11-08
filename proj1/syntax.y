@@ -1,5 +1,7 @@
 %{
     #include "lex.yy.c"
+    #include "spl_type.hpp"
+    #include "symbol_table.hpp"
 
     void yyerror(const char *s);
     void lineinfor(void);
