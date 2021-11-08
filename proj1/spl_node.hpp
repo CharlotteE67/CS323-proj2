@@ -53,6 +53,7 @@ public:
     string get_name(){return name;}
     Node_TYPE get_type(){return TYPE;}
     int get_intVal(){return int_value;}
+    int get_lineNo(){return lineno;}
 
 };
 

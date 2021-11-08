@@ -12,11 +12,13 @@ string defGetTypeName(Node* def){
     Node* type = def->child[0]->child[0];
     return type->get_name();
 }
+
 /* def -> Specifier -> StructSpecifier -> STRUCT ID LC DefList RC | STRUCT ID */
 string defGetStructName(Node *def){
     Node* stuID = def->child[0]->child[0]->child[1];
     return stuID->get_name();
 }
+
 /* VarDec:ID
 *    | VarDec LB INT RB
 */
@@ -26,7 +28,6 @@ string vardecGetName(Node *vardec){
     }
     return vardec->child[0]->get_name();
 }
-
 
 /* DecList -> Dec
         | Dec COMMA DecList
@@ -46,6 +47,7 @@ void defPrimitiveType(Node *def){
         
         if(symbolTable.count(varName)==1){
             //check data type
+            semanticErrors(3,def->get_lineNo());
         }
         if(varDec->child.size()==1){
             //vardec -> id
@@ -77,7 +79,8 @@ void defStructType(Node *def){
         string varName = vardecGetName(varDec);
         
         if(symbolTable.count(varName)==1){
-            //check data type
+            //redefine
+            semanticErrors(3,def->get_lineNo());
         }
         if(varDec->child.size()==1){
             //vardec -> id
@@ -130,6 +133,7 @@ void extDef_SES(Node *def){
         string varName = vardecGetName(varDec);
         if(symbolTable.count(varName)==1){
             //redefine
+            semanticErrors(3,def->get_lineNo());
         }
         if(varDec->child.size()==1){
             symbolTable[varName] = new Type(varName,dataType);
@@ -152,6 +156,58 @@ void extDef_SES(Node *def){
 }
 
 
-
-
+void semanticErrors(int typeID, int lineNo)
+{
+    switch (typeID)
+    {
+    case 1:
+        printf("Error type 1 at Line %d: undefined variable.\n", lineNo);
+        break;
+    case 2:
+        printf("Error type 2 at Line %d: undefined function.\n", lineNo);
+        break;
+    case 3:
+        printf("Error type 3 at Line %d: variable redefined.\n", lineNo);
+        break;
+    case 4:
+        printf("Error type 4 at Line %d: function redefined.\n", lineNo);
+        break;
+    case 5:
+        printf("Error type 5 at Line %d: unmatching types appear at both sides of the assigment operator.\n", lineNo);
+        break;
+    case 6:
+        printf("Error type 6 at Line %d: value can not be assigned.\n", lineNo);
+        break;
+    case 7:
+        printf("Error type 7 at Line %d: unmatching operands.\n", lineNo);
+        break;
+    case 8:
+        printf("Error type 8 at Line %d: function's return value type mismatch.\n", lineNo);
+        break;
+    case 9:
+        printf("Error type 9 at Line %d: function's arguments mismatch.\n", lineNo);
+        break;
+    case 10:
+        printf("Error type 10 at Line %d: applying indexing operator on non-array type variables.\n", lineNo);
+        break;
+    case 11:
+        printf("Error type 11 at Line %d: applying function invocation operator on non-function names.\n", lineNo);
+        break;
+    case 12:
+        printf("Error type 12 at Line %d: array indexing with a non-integer type expression.\n", lineNo);
+        break;
+    case 13:
+        printf("Error type 13 at Line %d: accessing members of a non-structure variable.\n", lineNo);
+        break;
+    case 14:
+        printf("Error type 8 at Line %d: accessing an undefined structure member.\n", lineNo);
+        break;
+    case 15:
+        printf("Error type 8 at Line %d: structure type redefined.\n", lineNo);
+        break;
+    
+    default:
+        break;
+    }
+}
 

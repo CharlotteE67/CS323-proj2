@@ -15,6 +15,6 @@ void defVisit(Node *def);
 void extDef_SES(Node *def);
 
 
-
+void semanticErrors(int typeID, int lineNo);
 
 #endif
