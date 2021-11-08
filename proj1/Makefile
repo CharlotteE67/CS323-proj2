@@ -27,11 +27,8 @@ bin:
 .symbol_table: .lex .syntax
 	$(CPP) -c symbol_table.cpp -o $(BIN)/symbol_table.o
 	@ar -rc $(BIN)/libsymbol_table.a $(BIN)/symbol_table.o
-.parser: .lex .syntax
-	$(CPP) -c syntax.tab.c -o $(BIN)/parser.o -lfl -ly
-	@ar -rc $(BIN)/libparser.a $(BIN)/parser.o
-splc: bin .spl_node .spl_type .symbol_table .parser
-	$(CPP) main.cpp -static -L$(BIN) -lparser -lsymbol_table -lspl_type -lspl_node -o $(BIN)/splc
+splc: bin .spl_node .spl_type .symbol_table
+	$(CPP) main.cpp -static -L$(BIN) -lsymbol_table -lspl_type -lspl_node -o $(BIN)/splc
 clean:
 	@rm -rf $(BIN)/
 	@rm -rf $(MAKE_PATH)/ lex.yy.c syntax.tab.* syntax.output

@@ -19,4 +19,6 @@ void structDec(Node *def);
 
 void semanticErrors(int typeID, int lineNo);
 
+bool isMatchedType(Type *t1, Type *t2);
+
 #endif
