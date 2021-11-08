@@ -31,7 +31,7 @@ bin:
 	$(CPP) -c syntax.tab.c -o $(BIN)/parser.o -lfl -ly
 	@ar -rc $(BIN)/libparser.a $(BIN)/parser.o
 splc: bin .spl_node .spl_type .symbol_table .parser
-	$(CPP) main.cpp -static -L$(BIN) -lspl_node -lspl_type -lsymbol_table -lparser -o $(BIN)/splc
+	$(CPP) main.cpp -static -L$(BIN) -lparser -lsymbol_table -lspl_type -lspl_node -o $(BIN)/splc
 clean:
 	@rm -rf $(BIN)/
 	@rm -rf $(MAKE_PATH)/ lex.yy.c syntax.tab.* syntax.output
