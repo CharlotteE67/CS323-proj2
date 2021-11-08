@@ -37,9 +37,11 @@ Node* decListGetVarDec(Node * decList){
     return decList->child[0]->child[0];
 }
 
-void defPrimitiveType(Node *def){
+FieldList* defPrimitiveType(Node *def,bool flagR){
     Node *decList = def->child[1];
     string dataType = defGetTypeName(def);
+    FieldList* head = new FieldList();
+    FieldList* ptr = head;
 
     while(true){
         Node * varDec = decListGetVarDec(decList);
@@ -52,6 +54,7 @@ void defPrimitiveType(Node *def){
         if(varDec->child.size()==1){
             //vardec -> id
             symbolTable[varName] = new Type(varName, dataType);
+            
         }else{
             //array type
             Type* base = new Type(varName,dataType);
@@ -65,15 +68,26 @@ void defPrimitiveType(Node *def){
             symbolTable[varName] = base;
         }
 
+        if(flagR){
+            //struct need, return fieldList
+            FieldList* next = new FieldList(varName,symbolTable[varName],nullptr);
+            ptr->next = next;
+            ptr = ptr->next;
+        }
+
         if(decList->child.size()==1){break;}
         decList = decList->child[2];
     }
+    return head->next;
 
 }
-void defStructType(Node *def){
+FieldList* defStructType(Node *def,bool flagR){
     Node *decList = def->child[1];
     string structName = defGetStructName(def);
 
+    FieldList* head = new FieldList();
+    FieldList* ptr = head;
+    
     while(true){
         Node * varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
@@ -97,29 +111,31 @@ void defStructType(Node *def){
             }
             symbolTable[varName] = base;
         }
+        if(flagR){
+            //struct need, return fieldList
+            FieldList* next = new FieldList(varName,symbolTable[varName],nullptr);
+            ptr->next = next;
+            ptr = ptr->next;
+        }
 
         if(decList->child.size()==1){break;}
         decList = decList->child[2];
     }
+    return head->next;
 
 }
 /* Def -> enter 
     local var
 */
-void defVisit(Node *def){
+FieldList* defVisit(Node *def,bool flagR){
     if(defGetTypeName(def)=="StructSpecifier"){
         //struct
-        defStructType(def);
+        return defStructType(def,flagR);
     }else{
-        defPrimitiveType(def);
+        return defPrimitiveType(def,flagR);
     }
 }
 
-/* ExtDef -> Specifier ExtDecList SEMI   (var declaration)
-        | Specifier SEMI                 (specifier = type/struct)
-        | Specifier FunDec CompSt        (func declaration)
-    ExtDecList -> VarDec
-        | VarDec COMMA ExtDecList */
 
 
 /* ExtDef -> Specifier ExtDecList SEMI   (var declaration)
@@ -155,6 +171,37 @@ void extDef_SES(Node *def){
 
 }
 
+/*  whenever meet SSP -> STRUCT ID {DefList}
+    enter this 
+*/
+void structDec(Node *ssp){
+    string stuName = ssp->child[1]->get_name();
+    FieldList* head = new FieldList();
+    FieldList* ptr = head;
+    Node* defL = ssp->child[3];
+
+    if(symbolTable.count(stuName)!=0){
+        //struct redefine
+        semanticErrors(15,ssp->get_lineNo());
+    }
+
+    while(true){
+        Node* def = defL->child[0];
+        //def visit
+        FieldList* defStu = defVisit(def,true);
+        while(ptr->next!=nullptr){
+            ptr = ptr->next;
+        }
+        ptr->next = defStu;
+
+        if(defL->child.size()==1){break;}
+        defL = defL->child[1];
+    }
+
+    Type * stu = new Type(stuName,head->next);
+    symbolTable[stuName] = stu;
+
+}
 
 void semanticErrors(int typeID, int lineNo)
 {
@@ -200,10 +247,10 @@ void semanticErrors(int typeID, int lineNo)
         printf("Error type 13 at Line %d: accessing members of a non-structure variable.\n", lineNo);
         break;
     case 14:
-        printf("Error type 8 at Line %d: accessing an undefined structure member.\n", lineNo);
+        printf("Error type 14 at Line %d: accessing an undefined structure member.\n", lineNo);
         break;
     case 15:
-        printf("Error type 8 at Line %d: structure type redefined.\n", lineNo);
+        printf("Error type 15 at Line %d: structure type redefined.\n", lineNo);
         break;
     
     default:

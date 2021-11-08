@@ -60,7 +60,11 @@ ExtDefList:
     | ExtDef ExtDefList { vector<Node*> vec = {$1, $2}; $$ = new Node("ExtDefList", @$.first_line, vec); }
     ;
 ExtDef:
-    Specifier ExtDecList SEMI { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("ExtDef", @$.first_line, vec); }
+    Specifier ExtDecList SEMI { 
+        vector<Node*> vec = {$1, $2, $3}; 
+        $$ = new Node("ExtDef", @$.first_line, vec); 
+        extDef_SES($$);
+    }
     | Specifier SEMI { vector<Node*> vec = {$1, $2}; $$ = new Node("ExtDef", @$.first_line, vec); $$->set_child(vec);}
     | Specifier FunDec CompSt { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("ExtDef", @$.first_line, vec); }
     | Specifier ExtDecList error  {puts(ERR_NO_SEMI.c_str());}
@@ -138,7 +142,11 @@ DefList:
     | Def DefList { vector<Node*> vec = {$1, $2}; $$ = new Node("DefList", @$.first_line, vec); }
 ;
 Def:
-    Specifier DecList SEMI { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Def", @$.first_line, vec); }
+    Specifier DecList SEMI { 
+        vector<Node*> vec = {$1, $2, $3}; 
+        $$ = new Node("Def", @$.first_line, vec);
+        defVisit($$,false);
+    }
     | Specifier DecList error {puts(ERR_NO_SEMI.c_str());}
     | error DecList SEMI {puts(ERR_NO_SPEC.c_str());}
     | Specifier error {puts("No Declare List");}
