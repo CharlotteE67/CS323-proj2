@@ -51,8 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-proj1/bin
+bin
 *.output
-proj1/lex.yy.c
-proj1/syntax.tab.c
-proj1/syntax.tab.h
+lex.yy.c
+syntax.tab.c
+syntax.tab.h

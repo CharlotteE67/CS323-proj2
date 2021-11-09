@@ -315,7 +315,7 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
     if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
         semanticErrors(7, left->get_lineNo());
     }
-    parent->set_varType()
+    // parent->set_varType()
 }
 
 /* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
