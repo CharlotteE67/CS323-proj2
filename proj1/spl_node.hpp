@@ -45,6 +45,7 @@ public:
     Node(string name,Node_TYPE type);
     Node(string name,int line_no);
     Node(string name,int line_no, vector<Node*>& child);
+    Node(string name,int line_no,Node_TYPE type);
 
     void set_child(vector<Node*>&);
 

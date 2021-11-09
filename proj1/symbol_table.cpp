@@ -169,7 +169,8 @@ void extDef_SES(Node *def) {
 
 }
 
-/*  whenever meet SSP -> STRUCT ID {DefList}
+/*  structure definition
+    whenever meet SSP -> STRUCT ID {DefList}
     enter this 
 */
 void structDec(Node *ssp) {
@@ -201,16 +202,63 @@ void structDec(Node *ssp) {
 
 }
 
+/*
+*   ExtDef -> Specifier FunDec CompSt
+*   load new func into symbol table
+*/
+void funcDec(Node *exDef){
+    string funcName = exDef->child[1]->child[0]->get_name();
+    string returnName;
+    if(symbolTable.count(funcName)!=0){
+        //func redifined
+        semanticErrors(4,exDef->get_lineNo());
+    }
+
+    if (defGetTypeName(exDef) == "StructSpecifier") {
+        //struct
+        returnName = defGetStructName(exDef);
+        symbolTable[funcName] = symbolTable[returnName];
+    } else {
+        returnName = defGetTypeName(exDef);
+        symbolTable[funcName] = new Type(funcName, returnName);
+    }
+    
+
+
+}
+
+/*
+*   check type 1: undefined var
+*   invoked whenever meet EXP->ID
+*/
+void checkVarDef(Node *id){
+    string name = id->get_name();
+    if(symbolTable.count(name)==0){
+        semanticErrors(1,id->get_lineNo());
+    }
+}
+
+/*
+*   check type 10: array indexing
+*       VarDec -> ID| VarDec LB INT RB
+*/
+void checkIsArray(){
+
+}
+
+
+
+
 void semanticErrors(int typeID, int lineNo) {
     switch (typeID) {
         case 1:
-            printf("Error type 1 at Line %d: undefined variable.\n", lineNo);
+            printf("Error type 1 at Line %d: undefined variable.\n", lineNo);//done
             break;
         case 2:
             printf("Error type 2 at Line %d: undefined function.\n", lineNo);
             break;
         case 3:
-            printf("Error type 3 at Line %d: variable redefined.\n", lineNo);
+            printf("Error type 3 at Line %d: variable redefined.\n", lineNo);//done
             break;
         case 4:
             printf("Error type 4 at Line %d: function redefined.\n", lineNo);
@@ -247,7 +295,7 @@ void semanticErrors(int typeID, int lineNo) {
             printf("Error type 14 at Line %d: accessing an undefined structure member.\n", lineNo);
             break;
         case 15:
-            printf("Error type 15 at Line %d: structure type redefined.\n", lineNo);
+            printf("Error type 15 at Line %d: structure type redefined.\n", lineNo);//done
             break;
 
         default:

@@ -78,6 +78,11 @@ Node::Node(string name, int line_no, vector<Node *> &child) {
     this->TYPE = Node_TYPE::LINE;
     this->child = child;
 }
+Node::Node(string name,int line_no,Node_TYPE type){
+    this->name = name;
+    this->lineno = line_no;
+    this->TYPE = type;
+}
 
 void Node::set_child(vector<Node *> &child) {
     this->child = child;

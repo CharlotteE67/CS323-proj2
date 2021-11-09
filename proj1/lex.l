@@ -108,7 +108,7 @@ MULTI_COMMENT_ERR \/\*(.|\n)*((\/\*|\*\/)){1,}(.|\n)*\*\/
 
 
 {ID} {
-    yylval.value = new Node(yytext,Node_TYPE::ID);
+    yylval.value = new Node(yytext,yylineno,Node_TYPE::ID);
     return ID;
 }
 {INT_10} {
