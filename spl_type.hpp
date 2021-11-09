@@ -9,7 +9,11 @@ using namespace std;
 enum class CATEGORY {
     PRIMITIVE, ARRAY, STRUCTURE
 };
-enum class Primitive{INT,FLOAT,CHAR};
+enum class Primitive {
+    INT,
+    FLOAT,
+    CHAR
+};
 
 class Type;
 
@@ -19,8 +23,8 @@ class FieldList;
 
 union dTypes {
     Primitive pri;
-    Array* arr;
-    FieldList* fl;
+    Array *arr;
+    FieldList *fl;
 };
 
 class Type {
@@ -34,9 +38,9 @@ public:
 
     Type(string name, string pri);
 
-    Type(string name, Array* arr);
+    Type(string name, Array *arr);
 
-    Type(string name, FieldList* fl);
+    Type(string name, FieldList *fl);
 
 };
 

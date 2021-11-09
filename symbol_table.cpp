@@ -195,11 +195,17 @@ void extDef_SES(Node *def) {
  *  Stmt:
  *      | RETURN Exp SEMI
  */
+std::ostream & operator<<(std::ostream &os,const Primitive &ec){
+    os<<static_cast<std::underlying_type<Primitive>::type>(ec);
+    return os;
+}
+
 void checkFuncReturn(Node *extDef){
     Node *stmtList = extDef->child[2]->child[2];
     Node *sl = stmtList, *st;
     Type *deft, *rett;
     deft = symbolTable[extDef->child[1]->get_name()];
+
     while (!sl->child.empty()) {
         st = sl->child[0];
         if (st->child[0]->get_name() == "RETURN") {
@@ -313,7 +319,7 @@ void funcDec(Node *exDef){
     }
 
     //function arg
-    
+    checkFuncReturn(exDef);
 
 
 }
@@ -461,6 +467,7 @@ bool isMatchedType(Type *t1, Type *t2) {
         Array *a1 = t1->type.arr, *a2 = t2->type.arr;
         return (a1->size != a2->size) && isMatchedType(a1->base, a2->base);
     }
+
     return t1->type.pri == t2->type.pri;
 }
 

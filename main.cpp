@@ -1,5 +1,4 @@
 #include "syntax.tab.c"
-#include <stdio.h>
 
 #define DEBUG false
 
@@ -8,7 +7,7 @@ int main(int argc,char **argv){
     if(argc <= 1){
         fprintf(LEX_ERR_OP, "Usage: %s <file_path>\n", argv[0]);
         return EXIT_FAIL;
-    } else if(argc == 2){
+    } else {
         FILE *f = fopen(argv[1], "r");
         if(!f){
             fprintf(LEX_ERR_OP, "Can't open the file %s\n", argv[1]);
@@ -16,11 +15,8 @@ int main(int argc,char **argv){
         }
         yyrestart(f);
         yyparse();
-    } else{
-        fprintf(LEX_ERR_OP, "Too many arguments! Expected: 2. Received %d\n", argc);
-        return EXIT_FAIL;
     }
-    if (!has_err && DEBUG) {
+    if (argc >= 3 && argv[2][0] == 't') {
         root->show(0);
     }
     return EXIT_OK;
