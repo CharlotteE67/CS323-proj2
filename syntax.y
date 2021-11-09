@@ -39,9 +39,9 @@
 %left <value> OR
 %left <value> AND
 %left <value> LT LE GT GE NE EQ
+%left UMINUS
 %left <value> PLUS MINUS
 %left <value> MUL DIV
-%left UMINUS
 %right <value> NOT
 %left <value> LP RP LB RB DOT
 %token <value> SEMI COMMA
@@ -188,6 +188,7 @@ Exp:
     | Exp EQ Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
     | Exp PLUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
     | Exp MINUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
+    | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec);}
     | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
     | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
     | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
@@ -221,7 +222,6 @@ Args:
     Exp COMMA Args { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp { vector<Node*> vec = {$1}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp COMMA error { puts(ERR_MORE_COMMA.c_str()); }
-    | Exp Args error { puts(ERR_NO_COMMA.c_str()); }
 ;
 %%
 void yyerror(const char *s){
