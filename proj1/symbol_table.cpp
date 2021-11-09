@@ -278,9 +278,26 @@ void checkIsArray(){
 
 
 
+void checkRvalueOnLeft(Node *left, int lineNum) {
+    // single ID
+    if (left->child.size() == 1 && left->child[0]->get_name() == "ID") {
+        return;
+    }
+    // Exp.ID
+    if (left->child.size() == 3 && left->child[0]->get_name() == "Exp" &&
+        left->child[1]->get_name() == "DOT" && left->child[2]->get_name() == "ID") {
+        return;
+    }
+    // with bracket
+    if (left->child.size() == 4 && left->child[0]->get_name() == "Exp" && left->child[1]->get_name() == "LB"
+        && left->child[2]->get_name() == "Exp" && left->child[3]->get_name() == "RB") {
+        return;
+    }
+    semanticErrors(6, lineNum);
+}
 
 /* Exp -> Exp ASSIGN Exp */
-void checkAssignOp(Node *left, Node *right, int lineNum) {
+void checkAssignOp(Node *left, Node *right, Node *parent, int lineNum) {
     if (isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
         semanticErrors(5, lineNum);
     }
@@ -288,7 +305,7 @@ void checkAssignOp(Node *left, Node *right, int lineNum) {
 
 /* Exp -> Exp AND Exp
        -> Exp OR Exp */
-void checkBoolOp(Node *left, Node *right, int lineNum) {
+void checkBoolOp(Node *left, Node *right, Node *parent, int lineNum) {
     if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
         semanticErrors(7, lineNum);
     }
@@ -297,7 +314,7 @@ void checkBoolOp(Node *left, Node *right, int lineNum) {
 /* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
     | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
     | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp*/
-void checkMathOp(Node *left, Node *right, int lineNum) {
+void checkMathOp(Node *left, Node *right, Node *parent, int lineNum) {
     if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE
         || symbolTable[right->get_name()]->category != CATEGORY::PRIMITIVE
         || isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {

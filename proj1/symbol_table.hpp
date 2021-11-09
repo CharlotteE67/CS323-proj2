@@ -27,4 +27,12 @@ void checkVarDef(Node *id);
 
 void funcDec(Node *exDef);
 
+void checkRvalueOnLeft(Node *left, int lineNum);
+
+void checkAssignOp(Node *left, Node *right, Node *parent, int lineNum);
+
+void checkBoolOp(Node *left, Node *right, Node *parent, int lineNum);
+
+void checkMathOp(Node *left, Node *right, Node *parent, int lineNum);
+
 #endif
