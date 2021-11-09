@@ -94,6 +94,10 @@ FieldList *defStructType(Node *def, bool flagR) {
             //redefine
             semanticErrors(3, def->get_lineNo());
         }
+        if(symbolTable.count(structName)==0){
+            //struct undefined
+            semanticErrors(14,def->get_lineNo());
+        }
         if (varDec->child.size() == 1) {
             //vardec -> id
             symbolTable[varName] = symbolTable[structName];
@@ -261,7 +265,7 @@ void semanticErrors(int typeID, int lineNo) {
             printf("Error type 3 at Line %d: variable redefined.\n", lineNo);//done
             break;
         case 4:
-            printf("Error type 4 at Line %d: function redefined.\n", lineNo);
+            printf("Error type 4 at Line %d: function redefined.\n", lineNo);//done
             break;
         case 5:
             printf("Error type 5 at Line %d: unmatching types appear at both sides of the assigment operator.\n",

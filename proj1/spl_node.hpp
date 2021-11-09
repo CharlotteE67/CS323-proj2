@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "spl_type.hpp"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ private:
     string name;
     //string id_name;// == string_value
     Node_TYPE TYPE;
+    Type *varType;
     union{
         int lineno;
         int int_value;
@@ -55,6 +57,8 @@ public:
     Node_TYPE get_type(){return TYPE;}
     int get_intVal(){return int_value;}
     int get_lineNo(){return lineno;}
+    Type* get_varType(){return varType;}
+    void set_varType(Type *var){varType = var;}
 
 };
 
