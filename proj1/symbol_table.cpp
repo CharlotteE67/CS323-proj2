@@ -196,7 +196,7 @@ void checkFuncReturn(Node *extDef){
         if (st->child[0]->get_name() == "RETURN") {
             rett = st->child[1]->get_varType();
             if (!isMatchedType(deft, rett)) {
-                semanticErrors(8, st->child[0]->get_lineNo());
+                semanticErrors(8, st->get_lineNo());
             }
         }
         sl = sl->child[1];
