@@ -29,12 +29,12 @@ void funcDec(Node *exDef);
 
 void checkFuncNoDef(Node *node);
 
-void checkRvalueOnLeft(Node *left, int lineNum);
+void checkRvalueOnLeft(Node *left);
 
-void checkAssignOp(Node *left, Node *right, Node *parent, int lineNum);
+void checkAssignOp(Node *left, Node *right, Node *parent);
 
-void checkBoolOp(Node *left, Node *right, Node *parent, int lineNum);
+void checkBoolOp(Node *left, Node *right, Node *parent);
 
-void checkMathOp(Node *left, Node *right, Node *parent, int lineNum);
+void checkMathOp(Node *left, Node *right, Node *parent);
 
 #endif
