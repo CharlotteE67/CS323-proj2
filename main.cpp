@@ -20,7 +20,7 @@ int main(int argc,char **argv){
         fprintf(LEX_ERR_OP, "Too many arguments! Expected: 2. Received %d\n", argc);
         return EXIT_FAIL;
     }
-    if (!has_err || DEBUG) {
+    if (!has_err && DEBUG) {
         root->show(0);
     }
     return EXIT_OK;
