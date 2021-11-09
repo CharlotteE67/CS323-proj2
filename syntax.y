@@ -88,7 +88,11 @@ Specifier:
     | StructSpecifier { vector<Node*> vec = {$1}; $$ = new Node("Specifier", @$.first_line, vec); }
 ;
 StructSpecifier:
-    STRUCT ID LC DefList RC { vector<Node*> vec = {$1, $2, $3, $4, $5}; $$ = new Node("StructSpecifier", @$.first_line, vec); }
+    STRUCT ID LC DefList RC { 
+        vector<Node*> vec = {$1, $2, $3, $4, $5}; 
+        $$ = new Node("StructSpecifier", @$.first_line, vec); 
+        structDec($$);
+        }
     | STRUCT ID { vector<Node*> vec = {$1, $2}; $$ = new Node("StructSpecifier", @$.first_line, vec); }
     | STRUCT ID LC DefList error { puts(ERR_NO_RC.c_str()); }
 ;

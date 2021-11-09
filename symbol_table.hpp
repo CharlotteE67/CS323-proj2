@@ -13,6 +13,8 @@ using namespace std;
 
 FieldList* defVisit(Node *def,bool flagR);
 
+void structDec(Node *ssp);
+
 void extDef_SES(Node *def);
 
 void checkFuncReturn(Node *extDef);
@@ -30,6 +32,7 @@ void funcDec(Node *exDef);
 void funcArgDec(Node *varList);
 
 void checkRvalueOnLeft(Node *left, int lineNum);
+
 void checkFuncNoDef(Node *node);
 
 void checkRvalueOnLeft(Node *left);
@@ -39,5 +42,7 @@ void checkAssignOp(Node *left, Node *right, Node *parent);
 void checkBoolOp(Node *left, Node *right, Node *parent);
 
 void checkMathOp(Node *left, Node *right, Node *parent);
+
+
 
 #endif
