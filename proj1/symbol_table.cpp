@@ -249,6 +249,32 @@ void checkIsArray(){
 
 
 
+/* Exp -> Exp ASSIGN Exp */
+void checkAssignOp(Node *left, Node *right, int lineNum) {
+    if (isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
+        semanticErrors(5, lineNum);
+    }
+}
+
+/* Exp -> Exp AND Exp
+       -> Exp OR Exp */
+void checkBoolOp(Node *left, Node *right, int lineNum) {
+    if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
+        semanticErrors(7, lineNum);
+    }
+}
+
+/* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
+    | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
+    | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp*/
+void checkMathOp(Node *left, Node *right, int lineNum) {
+    if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE 
+        || symbolTable[right->get_name()]->category != CATEGORY::PRIMITIVE
+        || isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
+        semanticErrors(7, lineNum);
+    }
+}
+
 void semanticErrors(int typeID, int lineNo) {
     switch (typeID) {
         case 1:
