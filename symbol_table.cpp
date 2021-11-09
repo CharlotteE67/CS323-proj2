@@ -254,7 +254,7 @@ void structDec(Node *ssp) {
  * may return FieldList*
  */
 void funcArgDec(Node *varList){
-    printf("Enter funcArgDec()\n");
+    
     while(true){
         Node *paraD = varList->child[0];
 
@@ -295,7 +295,6 @@ void funcArgDec(Node *varList){
 *   load new func into symbol table
 */
 void funcDec(Node *exDef){
-    printf("ExtDef -> Specifier FunDec CompSt\n");
     string funcName = exDef->child[1]->child[0]->get_name();
     string returnName;
     if(symbolTable.count(funcName)!=0){
