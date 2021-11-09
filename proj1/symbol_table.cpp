@@ -173,6 +173,36 @@ void extDef_SES(Node *def) {
 
 }
 
+/*
+ *  ExtDef:
+ *      | Specifier FunDec CompSt
+ *  FunDec:
+ *      ID ...
+ *  CompSt:
+ *      LC DefList StmtList RC
+ *  StmtList:
+ *      NULL
+ *      | Stmt StmtList
+ *  Stmt:
+ *      | RETURN Exp SEMI
+ */
+void checkFuncReturn(Node *extDef){
+    Node *stmtList = extDef->child[2]->child[2];
+    Node *sl = stmtList, *st;
+    Type *deft, *rett;
+    deft = symbolTable[extDef->child[1]->get_name()];
+    while (!p->child.empty()) {
+        st = sl->child[0];
+        if (st->child[0]->get_name() == "RETURN") {
+            rett = st->child[1]->get_type();
+            if (!isMatchedType(deft, rett)) {
+                semanticErrors(8, st->child[0]->get_lineNo());
+            }
+        }
+        sl = sl->child[1];
+    }
+}
+
 /*  structure definition
     whenever meet SSP -> STRUCT ID {DefList}
     enter this 
@@ -226,7 +256,7 @@ void funcDec(Node *exDef){
         returnName = defGetTypeName(exDef);
         symbolTable[funcName] = new Type(funcName, returnName);
     }
-    
+
 
 
 }
@@ -252,6 +282,49 @@ void checkIsArray(){
 
 
 
+void checkRvalueOnLeft(Node *left, int lineNum) {
+    // single ID
+    if (left->child.size() == 1 && left->child[0]->get_name() == "ID") {
+        return;
+    }
+    // Exp.ID
+    if (left->child.size() == 3 && left->child[0]->get_name() == "Exp" &&
+        left->child[1]->get_name() == "DOT" && left->child[2]->get_name() == "ID") {
+        return;
+    }
+    // with bracket
+    if (left->child.size() == 4 && left->child[0]->get_name() == "Exp" && left->child[1]->get_name() == "LB"
+        && left->child[2]->get_name() == "Exp" && left->child[3]->get_name() == "RB") {
+        return;
+    }
+    semanticErrors(6, lineNum);
+}
+
+/* Exp -> Exp ASSIGN Exp */
+void checkAssignOp(Node *left, Node *right, Node *parent, int lineNum) {
+    if (isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
+        semanticErrors(5, lineNum);
+    }
+}
+
+/* Exp -> Exp AND Exp
+       -> Exp OR Exp */
+void checkBoolOp(Node *left, Node *right, Node *parent, int lineNum) {
+    if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
+        semanticErrors(7, lineNum);
+    }
+}
+
+/* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
+    | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
+    | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp*/
+void checkMathOp(Node *left, Node *right, Node *parent, int lineNum) {
+    if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE
+        || symbolTable[right->get_name()]->category != CATEGORY::PRIMITIVE
+        || isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
+        semanticErrors(7, lineNum);
+    }
+}
 
 void semanticErrors(int typeID, int lineNo) {
     switch (typeID) {
