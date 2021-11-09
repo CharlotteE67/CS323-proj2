@@ -145,19 +145,28 @@ FieldList *defVisit(Node *def, bool flagR) {
         | VarDec COMMA ExtDecList */
 void extDef_SES(Node *def) {
     Node *extDec = def->child[1];
-    string dataType = defGetTypeName(def);
+    // string dataType = defGetTypeName(def);
     while (true) {
         Node *varDec = extDec->child[0];
         string varName = vardecGetName(varDec);
+        Node *type = def->child[0]->child[0];
+        Type *ptr;
+    
         if (symbolTable.count(varName) == 1) {
             //redefine
             semanticErrors(3, def->get_lineNo());
         }
+        if(type->child.size()==0){
+            ptr = new Type(varName,type->get_name());
+        }else{
+            ptr = symbolTable[type->child[1]->get_name()];
+        }
+
         if (varDec->child.size() == 1) {
-            symbolTable[varName] = new Type(varName, dataType);
+            symbolTable[varName] = ptr;
         } else {
             //array type
-            Type *base = new Type(varName, dataType);
+            Type *base = ptr;
             while (varDec->child.size() != 1) {
                 int arrSize = varDec->child[2]->get_intVal();
                 Array *arr = new Array(base, arrSize);
@@ -236,11 +245,57 @@ void structDec(Node *ssp) {
 
 }
 
+/**
+ * VarList -> ParamDec COMMA VarList| ParamDec
+ * ParamDec -> Specifier VarDec
+ * VarDec -> ID | VarDec LB INT RB
+ * 
+ * load func args into symbol table.
+ * may return FieldList*
+ */
+void funcArgDec(Node *varList){
+    printf("Enter funcArgDec()\n");
+    while(true){
+        Node *paraD = varList->child[0];
+
+        Node *varDec = paraD->child[1];
+        Node *type = paraD->child[0]->child[0];
+        Type *ptr;
+        string varName = vardecGetName(varDec);
+        if(symbolTable.count(varName)==1){
+            semanticErrors(3,varList->get_lineNo());
+        }
+        if(type->child.size()==0){
+            ptr = new Type(varName,type->get_name());
+        }else{
+            ptr = symbolTable[type->child[1]->get_name()];
+        }
+
+        if(varDec->child.size()==1){
+            symbolTable[varName] = ptr;
+        }else{
+            Type *base = ptr;
+            while(varDec->child.size()!=1){
+                int arrSize = varDec->child[2]->get_intVal();
+                Array *arr = new Array(base,arrSize);
+                Type *upper = new Type(varName,arr);
+                base = upper;
+                varDec = varDec->child[0];
+            }
+            symbolTable[varName] = base;
+        }
+
+        if(varList->child.size()==1){break;}
+        varList = varList->child[2];
+    }
+
+}
 /*
 *   ExtDef -> Specifier FunDec CompSt
 *   load new func into symbol table
 */
 void funcDec(Node *exDef){
+    printf("ExtDef -> Specifier FunDec CompSt\n");
     string funcName = exDef->child[1]->child[0]->get_name();
     string returnName;
     if(symbolTable.count(funcName)!=0){
@@ -257,6 +312,8 @@ void funcDec(Node *exDef){
         symbolTable[funcName] = new Type(funcName, returnName);
     }
 
+    //function arg
+    
 
 
 }

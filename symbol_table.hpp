@@ -27,6 +27,8 @@ void checkVarDef(Node *id);
 
 void funcDec(Node *exDef);
 
+void funcArgDec(Node *varList);
+
 void checkRvalueOnLeft(Node *left, int lineNum);
 
 void checkAssignOp(Node *left, Node *right, Node *parent, int lineNum);

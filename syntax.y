@@ -100,7 +100,11 @@ VarDec:
     | VarDec LB INT error %prec LACK_ERR {puts(ERR_NO_RB.c_str());}
 ;
 FunDec:
-    ID LP VarList RP { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("FunDec", @$.first_line, vec); }
+    ID LP VarList RP { 
+        vector<Node*> vec = {$1, $2, $3, $4}; 
+        $$ = new Node("FunDec", @$.first_line, vec); 
+        funcArgDec($3);
+        }
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("FunDec", @$.first_line, vec); }
     | ID LP VarList error {puts(ERR_NO_RP.c_str());}
     | ID LP error {puts(ERR_NO_RP.c_str());}
