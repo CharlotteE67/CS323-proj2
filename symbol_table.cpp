@@ -392,7 +392,7 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
     | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
     | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp */
 void checkMathOp(Node *left, Node *right, Node *parent) {
-    if (isMatchedType(left->get_varType(), right->get_varType())) {
+    if (!isMatchedType(left->get_varType(), right->get_varType())) {
         semanticErrors(7, left->get_lineNo());
     }
     // assign type to parent
