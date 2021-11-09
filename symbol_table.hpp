@@ -14,6 +14,8 @@ using namespace std;
 
 FieldList* defVisit(Node *def,bool flagR);
 
+void structDec(Node *ssp);
+
 void extDef_SES(Node *def);
 
 void checkFuncReturn(Node *extDef);

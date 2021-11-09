@@ -44,32 +44,32 @@ FieldList *defPrimitiveType(Node *def, bool flagR) {
         Node *varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
 
-        if (symbolTable.count(varName) == 1) {
-            //check data type
-            semanticErrors(3, def->get_lineNo());
-        }
-        if (varDec->child.size() == 1) {
-            //vardec -> id
-            symbolTable[varName] = new Type(varName, dataType);
-
-        } else {
-            //array type
-            Type *base = new Type(varName, dataType);
-            while (varDec->child.size() != 1) {
-                int arrSize = varDec->child[2]->get_intVal();
-                Array *arr = new Array(base, arrSize);
-                Type *upper = new Type(varName, arr);
-                base = upper;
-                varDec = varDec->child[0];
-            }
-            symbolTable[varName] = base;
-        }
-
         if (flagR) {
             //struct need, return fieldList
             FieldList *next = new FieldList(varName, symbolTable[varName], nullptr);
             ptr->next = next;
             ptr = ptr->next;
+        } else {
+            if (symbolTable.count(varName) == 1) {
+                //check data type
+                semanticErrors(3, def->get_lineNo());
+            }
+            if (varDec->child.size() == 1) {
+                //vardec -> id
+                symbolTable[varName] = new Type(varName, dataType);
+
+            } else {
+                //array type
+                Type *base = new Type(varName, dataType);
+                while (varDec->child.size() != 1) {
+                    int arrSize = varDec->child[2]->get_intVal();
+                    Array *arr = new Array(base, arrSize);
+                    Type *upper = new Type(varName, arr);
+                    base = upper;
+                    varDec = varDec->child[0];
+                }
+                symbolTable[varName] = base;
+            }
         }
 
         if (decList->child.size() == 1) { break; }
@@ -89,35 +89,35 @@ FieldList *defStructType(Node *def, bool flagR) {
     while (true) {
         Node *varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
-
-        if (symbolTable.count(varName) == 1) {
-            //redefine
-            semanticErrors(3, def->get_lineNo());
-        }
-        if (symbolTable.count(structName) == 0) {
-            //struct undefined
-            semanticErrors(14, def->get_lineNo());
-        }
-        if (varDec->child.size() == 1) {
-            //vardec -> id
-            symbolTable[varName] = symbolTable[structName];
-        } else {
-            //array type
-            Type *base = symbolTable[structName];
-            while (varDec->child.size() != 1) {
-                int arrSize = varDec->child[2]->get_intVal();
-                Array *arr = new Array(base, arrSize);
-                Type *upper = new Type(varName, arr);
-                base = upper;
-                varDec = varDec->child[0];
-            }
-            symbolTable[varName] = base;
-        }
         if (flagR) {
             //struct need, return fieldList
             FieldList *next = new FieldList(varName, symbolTable[varName], nullptr);
             ptr->next = next;
             ptr = ptr->next;
+        } else {
+            if (symbolTable.count(varName) == 1) {
+                //redefine
+                semanticErrors(3, def->get_lineNo());
+            }
+            if (symbolTable.count(structName) == 0) {
+                //struct undefined
+                semanticErrors(14, def->get_lineNo());
+            }
+            if (varDec->child.size() == 1) {
+                //vardec -> id
+                symbolTable[varName] = symbolTable[structName];
+            } else {
+                //array type
+                Type *base = symbolTable[structName];
+                while (varDec->child.size() != 1) {
+                    int arrSize = varDec->child[2]->get_intVal();
+                    Array *arr = new Array(base, arrSize);
+                    Type *upper = new Type(varName, arr);
+                    base = upper;
+                    varDec = varDec->child[0];
+                }
+                symbolTable[varName] = base;
+            }
         }
 
         if (decList->child.size() == 1) { break; }
@@ -265,7 +265,7 @@ void structDec(Node *ssp) {
         semanticErrors(15, ssp->get_lineNo());
     }
 
-    while (true) {
+    while (!defL->child.empty()) {
         Node *def = defL->child[0];
         //def visit
         FieldList *defStu = defVisit(def, true);
@@ -273,8 +273,6 @@ void structDec(Node *ssp) {
             ptr = ptr->next;
         }
         ptr->next = defStu;
-
-        if (defL->child.size() == 1) { break; }
         defL = defL->child[1];
     }
 
@@ -352,6 +350,7 @@ void funcDec(Node *exDef) {
     }
 
     //function arg
+
     checkFuncReturn(exDef);
 
 
