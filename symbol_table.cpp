@@ -301,6 +301,7 @@ void funcDec(Node *exDef){
     if(symbolTable.count(funcName)!=0){
         //func redifined
         semanticErrors(4,exDef->get_lineNo());
+        return;
     }
 
     if (defGetTypeName(exDef) == "StructSpecifier") {
@@ -337,6 +338,12 @@ void checkIsArray(){
 
 }
 
+/* Exp -> ID LP Args RP | ID LP RP */
+void checkFuncNoDef(Node *node){
+    if (symbolTable.count(node->get_name()) == 0) {
+        semanticErrors(2, node->get_lineNo());
+    }
+}
 
 
 void checkRvalueOnLeft(Node *left) {
@@ -359,7 +366,7 @@ void checkRvalueOnLeft(Node *left) {
 
 /* Exp -> Exp ASSIGN Exp */
 void checkAssignOp(Node *left, Node *right, Node *parent) {
-    if (isMatchedType(left->get_varType(), right->get_varType())) {
+    if (!isMatchedType(left->get_varType(), right->get_varType())) {
         semanticErrors(5, left->get_lineNo());
     }
     // assign type to parent
@@ -372,19 +379,18 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
     if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
         semanticErrors(7, left->get_lineNo());
     }
-    // parent->set_varType()
+    parent->set_varType(new Type(parent->get_name(), "int"));
 }
 
 /* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
     | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
     | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp */
-void checkMathOp(Node *left, Node *right, Node *parent, int lineNum) {
-    if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE
-        || symbolTable[right->get_name()]->category != CATEGORY::PRIMITIVE
-        || isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
-        semanticErrors(7, lineNum);
+void checkMathOp(Node *left, Node *right, Node *parent) {
+    if (isMatchedType(left->get_varType(), right->get_varType())) {
+        semanticErrors(7, left->get_lineNo());
     }
     // assign type to parent
+    parent->set_varType(left->get_varType());
 }
 
 void semanticErrors(int typeID, int lineNo) {
@@ -393,7 +399,7 @@ void semanticErrors(int typeID, int lineNo) {
             printf("Error type 1 at Line %d: undefined variable.\n", lineNo);//done
             break;
         case 2:
-            printf("Error type 2 at Line %d: undefined function.\n", lineNo);
+            printf("Error type 2 at Line %d: undefined function.\n", lineNo);//done
             break;
         case 3:
             printf("Error type 3 at Line %d: variable redefined.\n", lineNo);//done
@@ -403,13 +409,13 @@ void semanticErrors(int typeID, int lineNo) {
             break;
         case 5:
             printf("Error type 5 at Line %d: unmatching types appear at both sides of the assigment operator.\n",
-                   lineNo);
+                   lineNo);//done
             break;
         case 6:
-            printf("Error type 6 at Line %d: value can not be assigned.\n", lineNo);
+            printf("Error type 6 at Line %d: value can not be assigned.\n", lineNo);//done
             break;
         case 7:
-            printf("Error type 7 at Line %d: unmatching operands.\n", lineNo);
+            printf("Error type 7 at Line %d: unmatching operands.\n", lineNo);//done
             break;
         case 8:
             printf("Error type 8 at Line %d: function's return value type mismatch.\n", lineNo);
