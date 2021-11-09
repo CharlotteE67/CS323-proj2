@@ -322,11 +322,12 @@ void funcDec(Node *exDef){
 *   check type 1: undefined var
 *   invoked whenever meet EXP->ID
 */
-void checkVarDef(Node *id){
+void checkVarDef(Node *id, Node *parent){
     string name = id->get_name();
     if(symbolTable.count(name)==0){
         semanticErrors(1,id->get_lineNo());
     }
+    parent->set_varType(symbolTable[name]);
 }
 
 /*
@@ -347,12 +348,12 @@ void checkFuncNoDef(Node *node){
 
 void checkRvalueOnLeft(Node *left) {
     // single ID
-    if (left->child.size() == 1 && left->child[0]->get_name() == "ID") {
+    if (left->child.size() == 1 && left->child[0]->get_type() == Node_TYPE::ID) {
         return;
     }
     // Exp.ID
     if (left->child.size() == 3 && left->child[0]->get_name() == "Exp" &&
-        left->child[1]->get_name() == "DOT" && left->child[2]->get_name() == "ID") {
+        left->child[1]->get_name() == "DOT" && left->child[2]->get_type() == Node_TYPE::ID) {
         return;
     }
     // with bracket
