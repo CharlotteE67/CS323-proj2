@@ -53,3 +53,6 @@ dkms.conf
 
 proj1/bin
 *.output
+proj1/lex.yy.c
+proj1/syntax.tab.c
+proj1/syntax.tab.h
