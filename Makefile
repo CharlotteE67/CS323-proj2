@@ -11,6 +11,7 @@ MAKE_PATH=./make-build-dir
 CXX_FLAGS = -O3 $(CXX_DEBUG) $(CXX_STD) $(CXX_WARN)
 CPP = $(GPP) $(CXX_FLAGS)
 
+all: splc
 bin:
 	mkdir -p $(BIN)
 
@@ -29,6 +30,7 @@ bin:
 	@ar -rc $(BIN)/libsymbol_table.a $(BIN)/symbol_table.o
 splc: bin .spl_node .spl_type .symbol_table
 	$(CPP) main.cpp -static -L$(BIN) -lsymbol_table -lspl_type -lspl_node -o $(BIN)/splc
+
 clean:
 	@rm -rf $(BIN)/
 	@rm -rf $(MAKE_PATH)/ lex.yy.c syntax.tab.* syntax.output
