@@ -192,7 +192,10 @@ Exp:
     	checkFuncNoDef($1);
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
     	}
-    | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
+    | ID LP RP {
+    	checkFuncNoDef($1);
+    	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
+    	}
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | ID { 
