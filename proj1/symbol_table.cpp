@@ -191,10 +191,10 @@ void checkFuncReturn(Node *extDef){
     Node *sl = stmtList, *st;
     Type *deft, *rett;
     deft = symbolTable[extDef->child[1]->get_name()];
-    while (!p->child.empty()) {
+    while (!sl->child.empty()) {
         st = sl->child[0];
         if (st->child[0]->get_name() == "RETURN") {
-            rett = st->child[1]->get_type();
+            rett = st->child[1]->get_varType();
             if (!isMatchedType(deft, rett)) {
                 semanticErrors(8, st->child[0]->get_lineNo());
             }
