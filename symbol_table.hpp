@@ -31,7 +31,7 @@ void funcDec(Node *exDef);
 void funcArgDec(Node *varList);
 
 void checkRvalueOnLeft(Node *left, int lineNum);
-void checkFuncNoDef(Node *node);
+void checkFuncNoDef(Node *root, Node *node);
 
 void checkRvalueOnLeft(Node *left);
 

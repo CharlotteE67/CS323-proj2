@@ -94,9 +94,9 @@ FieldList *defStructType(Node *def, bool flagR) {
             //redefine
             semanticErrors(3, def->get_lineNo());
         }
-        if(symbolTable.count(structName)==0){
+        if (symbolTable.count(structName) == 0) {
             //struct undefined
-            semanticErrors(14,def->get_lineNo());
+            semanticErrors(14, def->get_lineNo());
         }
         if (varDec->child.size() == 1) {
             //vardec -> id
@@ -151,14 +151,14 @@ void extDef_SES(Node *def) {
         string varName = vardecGetName(varDec);
         Node *type = def->child[0]->child[0];
         Type *ptr;
-    
+
         if (symbolTable.count(varName) == 1) {
             //redefine
             semanticErrors(3, def->get_lineNo());
         }
-        if(type->child.size()==0){
-            ptr = new Type(varName,type->get_name());
-        }else{
+        if (type->child.size() == 0) {
+            ptr = new Type(varName, type->get_name());
+        } else {
             ptr = symbolTable[type->child[1]->get_name()];
         }
 
@@ -195,27 +195,59 @@ void extDef_SES(Node *def) {
  *  Stmt:
  *      | RETURN Exp SEMI
  */
-std::ostream & operator<<(std::ostream &os,const Primitive &ec){
-    os<<static_cast<std::underlying_type<Primitive>::type>(ec);
+std::ostream &operator<<(std::ostream &os, const Primitive &ec) {
+    os << static_cast<std::underlying_type<Primitive>::type>(ec);
     return os;
 }
 
-void checkFuncReturn(Node *extDef){
-    Node *stmtList = extDef->child[2]->child[2];
-    Node *sl = stmtList, *st;
-    Type *deft, *rett;
-    deft = symbolTable[extDef->child[1]->get_name()];
-
-    while (!sl->child.empty()) {
-        st = sl->child[0];
-        if (st->child[0]->get_name() == "RETURN") {
-            rett = st->child[1]->get_varType();
-            if (!isMatchedType(deft, rett)) {
-                semanticErrors(8, st->get_lineNo());
-            }
-        }
-        sl = sl->child[1];
+string getPriType(Primitive pri){
+    switch (pri) {
+        case Primitive::INT:
+            return "int";
+            break;
+        case Primitive::FLOAT:
+            return "float";
+            break;
+        case Primitive::CHAR:
+            return "char";
+            break;
     }
+}
+
+string getCatType(CATEGORY cat){
+    switch (cat) {
+        case CATEGORY::PRIMITIVE:
+            return "primitive";
+            break;
+        case CATEGORY::ARRAY:
+            return "array";
+            break;
+        case CATEGORY::STRUCTURE:
+            return "struct";
+            break;
+    }
+}
+
+void dfsCheckReturn(Node *root, Type *type) {
+    if (root == nullptr || root->child.empty()) return;
+    if (root->child[0]->get_name() == "RETURN") {
+        if (!isMatchedType(type, root->child[1]->get_varType())) {
+            semanticErrors(8, root->get_lineNo());
+        }
+        return;
+    }
+
+    for (auto ch: root->child) {
+        dfsCheckReturn(ch, type);
+    }
+}
+
+void checkFuncReturn(Node *extDef) {
+    Node *stmtList = extDef->child[2]->child[2];
+    Type *deft;
+    deft = symbolTable[extDef->child[1]->child[0]->get_name()];
+
+    dfsCheckReturn(stmtList, deft);
 }
 
 /*  structure definition
@@ -259,53 +291,54 @@ void structDec(Node *ssp) {
  * load func args into symbol table.
  * may return FieldList*
  */
-void funcArgDec(Node *varList){
-    
-    while(true){
+void funcArgDec(Node *varList) {
+
+    while (true) {
         Node *paraD = varList->child[0];
 
         Node *varDec = paraD->child[1];
         Node *type = paraD->child[0]->child[0];
         Type *ptr;
         string varName = vardecGetName(varDec);
-        if(symbolTable.count(varName)==1){
-            semanticErrors(3,varList->get_lineNo());
+        if (symbolTable.count(varName) == 1) {
+            semanticErrors(3, varList->get_lineNo());
         }
-        if(type->child.size()==0){
-            ptr = new Type(varName,type->get_name());
-        }else{
+        if (type->child.size() == 0) {
+            ptr = new Type(varName, type->get_name());
+        } else {
             ptr = symbolTable[type->child[1]->get_name()];
         }
 
-        if(varDec->child.size()==1){
+        if (varDec->child.size() == 1) {
             symbolTable[varName] = ptr;
-        }else{
+        } else {
             Type *base = ptr;
-            while(varDec->child.size()!=1){
+            while (varDec->child.size() != 1) {
                 int arrSize = varDec->child[2]->get_intVal();
-                Array *arr = new Array(base,arrSize);
-                Type *upper = new Type(varName,arr);
+                Array *arr = new Array(base, arrSize);
+                Type *upper = new Type(varName, arr);
                 base = upper;
                 varDec = varDec->child[0];
             }
             symbolTable[varName] = base;
         }
 
-        if(varList->child.size()==1){break;}
+        if (varList->child.size() == 1) { break; }
         varList = varList->child[2];
     }
 
 }
+
 /*
 *   ExtDef -> Specifier FunDec CompSt
 *   load new func into symbol table
 */
-void funcDec(Node *exDef){
+void funcDec(Node *exDef) {
     string funcName = exDef->child[1]->child[0]->get_name();
     string returnName;
-    if(symbolTable.count(funcName)!=0){
+    if (symbolTable.count(funcName) != 0) {
         //func redifined
-        semanticErrors(4,exDef->get_lineNo());
+        semanticErrors(4, exDef->get_lineNo());
         return;
     }
 
@@ -328,10 +361,10 @@ void funcDec(Node *exDef){
 *   check type 1: undefined var
 *   invoked whenever meet EXP->ID
 */
-void checkVarDef(Node *id, Node *parent){
+void checkVarDef(Node *id, Node *parent) {
     string name = id->get_name();
-    if(symbolTable.count(name)==0){
-        semanticErrors(1,id->get_lineNo());
+    if (symbolTable.count(name) == 0) {
+        semanticErrors(1, id->get_lineNo());
     }
     parent->set_varType(symbolTable[name]);
 }
@@ -340,15 +373,16 @@ void checkVarDef(Node *id, Node *parent){
 *   check type 10: array indexing
 *       VarDec -> ID| VarDec LB INT RB
 */
-void checkIsArray(){
+void checkIsArray() {
 
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
-void checkFuncNoDef(Node *node){
+void checkFuncNoDef(Node *root, Node *node) {
     if (symbolTable.count(node->get_name()) == 0) {
         semanticErrors(2, node->get_lineNo());
     }
+    root->set_varType(symbolTable[node->get_name()]);
 }
 
 
