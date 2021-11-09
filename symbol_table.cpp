@@ -246,6 +246,7 @@ void funcDec(Node *exDef){
     if(symbolTable.count(funcName)!=0){
         //func redifined
         semanticErrors(4,exDef->get_lineNo());
+        return;
     }
 
     if (defGetTypeName(exDef) == "StructSpecifier") {
@@ -257,8 +258,7 @@ void funcDec(Node *exDef){
         symbolTable[funcName] = new Type(funcName, returnName);
     }
 
-
-
+    checkFuncReturn(exDef);
 }
 
 /*
