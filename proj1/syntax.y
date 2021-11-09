@@ -68,9 +68,9 @@ ExtDef:
         extDef_SES($$);
     }
     | Specifier SEMI { vector<Node*> vec = {$1, $2}; $$ = new Node("ExtDef", @$.first_line, vec); $$->set_child(vec);}
-    | Specifier FunDec CompSt { 
-        vector<Node*> vec = {$1, $2, $3}; 
-        $$ = new Node("ExtDef", @$.first_line, vec); 
+    | Specifier FunDec CompSt {
+        vector<Node*> vec = {$1, $2, $3};
+        $$ = new Node("ExtDef", @$.first_line, vec);
         funcDec($$);
         }
     | Specifier ExtDecList error  {puts(ERR_NO_SEMI.c_str());}
@@ -188,11 +188,7 @@ Exp:
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
-    | ID { 
-        vector<Node*> vec = {$1}; 
-        $$ = new Node("Exp", @$.first_line, vec);
-        checkVarDef($$);
-        }
+    | ID { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | FLOAT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | LP Exp error {puts(ERR_NO_RP.c_str());}

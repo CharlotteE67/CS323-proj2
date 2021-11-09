@@ -169,6 +169,36 @@ void extDef_SES(Node *def) {
 
 }
 
+/*
+ *  ExtDef:
+ *      | Specifier FunDec CompSt
+ *  FunDec:
+ *      ID ...
+ *  CompSt:
+ *      LC DefList StmtList RC
+ *  StmtList:
+ *      NULL
+ *      | Stmt StmtList
+ *  Stmt:
+ *      | RETURN Exp SEMI
+ */
+void checkFuncReturn(Node *extDef){
+    Node *stmtList = extDef->child[2]->child[2];
+    Node *sl = stmtList, *st;
+    Type *deft, *rett;
+    deft = symbolTable[extDef->child[1]->get_name()];
+    while (!p->child.empty()) {
+        st = sl->child[0];
+        if (st->child[0]->get_name() == "RETURN") {
+            rett = st->child[1]->get_type();
+            if (!isMatchedType(deft, rett)) {
+                semanticErrors(8, st->child[0]->get_lineNo());
+            }
+        }
+        sl = sl->child[1];
+    }
+}
+
 /*  structure definition
     whenever meet SSP -> STRUCT ID {DefList}
     enter this 
@@ -222,7 +252,7 @@ void funcDec(Node *exDef){
         returnName = defGetTypeName(exDef);
         symbolTable[funcName] = new Type(funcName, returnName);
     }
-    
+
 
 
 }
@@ -268,7 +298,7 @@ void checkBoolOp(Node *left, Node *right, int lineNum) {
     | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
     | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp*/
 void checkMathOp(Node *left, Node *right, int lineNum) {
-    if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE 
+    if (symbolTable[left->get_name()]->category != CATEGORY::PRIMITIVE
         || symbolTable[right->get_name()]->category != CATEGORY::PRIMITIVE
         || isMatchedType(symbolTable[left->get_name()], symbolTable[right->get_name()])) {
         semanticErrors(7, lineNum);

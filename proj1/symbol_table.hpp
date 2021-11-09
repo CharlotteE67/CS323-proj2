@@ -15,6 +15,8 @@ FieldList* defVisit(Node *def,bool flagR);
 
 void extDef_SES(Node *def);
 
+void checkFuncReturn(Node *extDef);
+
 void structDec(Node *def);
 
 void semanticErrors(int typeID, int lineNo);
