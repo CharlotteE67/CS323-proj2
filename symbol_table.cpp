@@ -72,7 +72,6 @@ FieldList *defPrimitiveType(Node *def, bool flagR) {
             }
         }
 
-
         if (decList->child.size() == 1) { break; }
         decList = decList->child[2];
     }
@@ -196,11 +195,17 @@ void extDef_SES(Node *def) {
  *  Stmt:
  *      | RETURN Exp SEMI
  */
-void checkFuncReturn(Node *extDef) {
+std::ostream & operator<<(std::ostream &os,const Primitive &ec){
+    os<<static_cast<std::underlying_type<Primitive>::type>(ec);
+    return os;
+}
+
+void checkFuncReturn(Node *extDef){
     Node *stmtList = extDef->child[2]->child[2];
     Node *sl = stmtList, *st;
     Type *deft, *rett;
     deft = symbolTable[extDef->child[1]->get_name()];
+
     while (!sl->child.empty()) {
         st = sl->child[0];
         if (st->child[0]->get_name() == "RETURN") {
@@ -314,6 +319,7 @@ void funcDec(Node *exDef) {
 
     //function arg
 
+    checkFuncReturn(exDef);
 
 
 }
@@ -322,11 +328,12 @@ void funcDec(Node *exDef) {
 *   check type 1: undefined var
 *   invoked whenever meet EXP->ID
 */
-void checkVarDef(Node *id) {
+void checkVarDef(Node *id, Node *parent){
     string name = id->get_name();
-    if (symbolTable.count(name) == 0) {
-        semanticErrors(1, id->get_lineNo());
+    if(symbolTable.count(name)==0){
+        semanticErrors(1,id->get_lineNo());
     }
+    parent->set_varType(symbolTable[name]);
 }
 
 /*
@@ -347,12 +354,12 @@ void checkFuncNoDef(Node *node) {
 
 void checkRvalueOnLeft(Node *left) {
     // single ID
-    if (left->child.size() == 1 && left->child[0]->get_name() == "ID") {
+    if (left->child.size() == 1 && left->child[0]->get_type() == Node_TYPE::ID) {
         return;
     }
     // Exp.ID
     if (left->child.size() == 3 && left->child[0]->get_name() == "Exp" &&
-        left->child[1]->get_name() == "DOT" && left->child[2]->get_name() == "ID") {
+        left->child[1]->get_name() == "DOT" && left->child[2]->get_type() == Node_TYPE::ID) {
         return;
     }
     // with bracket
@@ -385,7 +392,7 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
     | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
     | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp */
 void checkMathOp(Node *left, Node *right, Node *parent) {
-    if (isMatchedType(left->get_varType(), right->get_varType())) {
+    if (!isMatchedType(left->get_varType(), right->get_varType())) {
         semanticErrors(7, left->get_lineNo());
     }
     // assign type to parent
@@ -460,6 +467,7 @@ bool isMatchedType(Type *t1, Type *t2) {
         Array *a1 = t1->type.arr, *a2 = t2->type.arr;
         return (a1->size != a2->size) && isMatchedType(a1->base, a2->base);
     }
+
     return t1->type.pri == t2->type.pri;
 }
 

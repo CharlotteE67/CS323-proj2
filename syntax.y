@@ -180,44 +180,46 @@ Exp:
     Exp ASSIGN Exp {
     	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
 	checkRvalueOnLeft($1);
-	checkAssignOp($1, $2, $3);
+	checkAssignOp($1, $3, $$);
     	}
-    | Exp AND Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($1, $2, $$);}
-    | Exp OR Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($1, $2, $$);}
-    | Exp LT Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp LE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp GT Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp GE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp NE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp EQ Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp PLUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp MINUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec);}
-    | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $2, $$);}
-    | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
-    | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); }
+    | Exp AND Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($1, $3, $$);}
+    | Exp OR Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($1, $3, $$);}
+    | Exp LT Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp LE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp GT Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp GE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp NE Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp EQ Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp PLUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp MINUS Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec);checkMathOp($2, $2, $$);}
+    | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
+    | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType()); }
+    | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType());}
     | ID LP Args RP {
     	checkFuncNoDef($1);
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
+    	$$->set_varType($1->get_varType());
     	}
     | ID LP RP {
     	checkFuncNoDef($1);
     	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
+    	$$->set_varType($1->get_varType());
     	}
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
-    | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
+    | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($3->get_varType());}
     | ID { 
         vector<Node*> vec = {$1}; 
         $$ = new Node("Exp", @$.first_line, vec);
-        checkVarDef($1); 
+        checkVarDef($1, $$);
         }
-    | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
-    | FLOAT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType(new Type("", "int"));}
+    | FLOAT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType(new Type("", "float"));}
     | LP Exp error {puts(ERR_NO_RP.c_str());}
     | ID LP Args error {puts(ERR_NO_RP.c_str());}
     | ID LP error {puts(ERR_NO_RP.c_str());}
-    | CHAR { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | CHAR { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType(new Type("", "char")); }
     | Exp LB Exp error {puts(ERR_NO_RB.c_str());}
     | Exp ERR_TOKEN Exp {}
     | ERR_TOKEN {}

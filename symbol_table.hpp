@@ -4,6 +4,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <map>
 #include "spl_node.hpp"
@@ -25,7 +26,7 @@ void semanticErrors(int typeID, int lineNo);
 
 bool isMatchedType(Type *t1, Type *t2);
 
-void checkVarDef(Node *id);
+void checkVarDef(Node *id, Node *parent);
 
 void funcDec(Node *exDef);
 
