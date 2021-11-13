@@ -197,27 +197,59 @@ void extDef_SES(Node *def) {
  *  Stmt:
  *      | RETURN Exp SEMI
  */
-std::ostream & operator<<(std::ostream &os,const Primitive &ec){
-    os<<static_cast<std::underlying_type<Primitive>::type>(ec);
+std::ostream &operator<<(std::ostream &os, const Primitive &ec) {
+    os << static_cast<std::underlying_type<Primitive>::type>(ec);
     return os;
 }
 
-void checkFuncReturn(Node *extDef){
-    Node *stmtList = extDef->child[2]->child[2];
-    Node *sl = stmtList, *st;
-    Type *deft, *rett;
-    deft = symbolTable[extDef->child[1]->get_name()];
-
-    while (!sl->child.empty()) {
-        st = sl->child[0];
-        if (st->child[0]->get_name() == "RETURN") {
-            rett = st->child[1]->get_varType();
-            if (!isMatchedType(deft, rett)) {
-                semanticErrors(8, st->get_lineNo());
-            }
-        }
-        sl = sl->child[1];
+string getPriType(Primitive pri){
+    switch (pri) {
+        case Primitive::INT:
+            return "int";
+            break;
+        case Primitive::FLOAT:
+            return "float";
+            break;
+        case Primitive::CHAR:
+            return "char";
+            break;
     }
+}
+
+string getCatType(CATEGORY cat){
+    switch (cat) {
+        case CATEGORY::PRIMITIVE:
+            return "primitive";
+            break;
+        case CATEGORY::ARRAY:
+            return "array";
+            break;
+        case CATEGORY::STRUCTURE:
+            return "struct";
+            break;
+    }
+}
+
+void dfsCheckReturn(Node *root, Type *type) {
+    if (root == nullptr || root->child.empty()) return;
+    if (root->child[0]->get_name() == "RETURN") {
+        if (!isMatchedType(type, root->child[1]->get_varType())) {
+            semanticErrors(8, root->get_lineNo());
+        }
+        return;
+    }
+
+    for (auto ch: root->child) {
+        dfsCheckReturn(ch, type);
+    }
+}
+
+void checkFuncReturn(Node *extDef) {
+    Node *stmtList = extDef->child[2]->child[2];
+    Type *deft;
+    deft = symbolTable[extDef->child[1]->child[0]->get_name()];
+
+    dfsCheckReturn(stmtList, deft);
 }
 
 /*  structure definition
@@ -335,10 +367,10 @@ void funcDec(Node *exDef) {
 *   check type 1: undefined var
 *   invoked whenever meet EXP->ID
 */
-void checkVarDef(Node *id, Node *parent){
+void checkVarDef(Node *id, Node *parent) {
     string name = id->get_name();
-    if(symbolTable.count(name)==0){
-        semanticErrors(1,id->get_lineNo());
+    if (symbolTable.count(name) == 0) {
+        semanticErrors(1, id->get_lineNo());
     }
     parent->set_varType(symbolTable[name]);
 }
@@ -352,10 +384,11 @@ void checkIsArray() {
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
-void checkFuncNoDef(Node *node) {
+void checkFuncNoDef(Node *root, Node *node) {
     if (symbolTable.count(node->get_name()) == 0) {
         semanticErrors(2, node->get_lineNo());
     }
+    root->set_varType(symbolTable[node->get_name()]);
 }
 
 

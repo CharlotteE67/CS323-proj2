@@ -198,14 +198,12 @@ Exp:
     | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType()); }
     | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType());}
     | ID LP Args RP {
-    	checkFuncNoDef($1);
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
-    	$$->set_varType($1->get_varType());
+    	checkFuncNoDef($$, $1);
     	}
     | ID LP RP {
-    	checkFuncNoDef($1);
     	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
-    	$$->set_varType($1->get_varType());
+    	checkFuncNoDef($$, $1);
     	}
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($3->get_varType());}
