@@ -32,7 +32,7 @@ public:
     string name;
     CATEGORY category;
     dTypes type;
-    Type *returnType; // 存储返回值的类型
+    Type *typePointer = nullptr; // For func:arg list; For struct number: nearest outlayer struct
 
     Type();
 
@@ -40,7 +40,12 @@ public:
 
     Type(string name, Array *arr);
 
-    Type(string name, FieldList *fl);
+    Type(string name, CATEGORY cat);
+
+    Type* get_typePtr(){return typePointer;}
+    void set_typePtr(Type *ptr){typePointer = ptr;}
+
+    void set_fieldList(FieldList *field){type.fl = field;}
 
 };
 

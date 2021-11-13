@@ -1,0 +1,10 @@
+struct a{
+    int x;
+    int y;
+    int z;
+};
+
+int main(){
+    struct a aa;
+    struct m n;
+}

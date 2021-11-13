@@ -3,7 +3,7 @@
 using namespace std;
 
 Type::Type() {
-    returnType = nullptr;
+    typePointer = nullptr;
 }
 
 Type::Type(string name, string pri): name(name), category(CATEGORY::PRIMITIVE) {
@@ -15,8 +15,8 @@ Type::Type(string name, Array* arr): name(name), category(CATEGORY::ARRAY){
     type.arr = arr;
 }
 
-Type::Type(string name, FieldList* fl): name(name), category(CATEGORY::STRUCTURE){
-    type.fl = fl;
+Type::Type(string name, CATEGORY ca): name(name), category(ca){
+    
 }
 
 Array::Array(Type *base, int size) : base(base), size(size) {}

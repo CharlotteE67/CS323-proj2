@@ -159,7 +159,7 @@ Def:
     Specifier DecList SEMI { 
         vector<Node*> vec = {$1, $2, $3}; 
         $$ = new Node("Def", @$.first_line, vec);
-        defVisit($$,false);
+        defVisit($$,nullptr);
     }
     | Specifier DecList error {puts(ERR_NO_SEMI.c_str());}
     | error DecList SEMI {puts(ERR_NO_SPEC.c_str());}

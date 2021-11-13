@@ -12,7 +12,7 @@
 
 using namespace std;
 
-FieldList* defVisit(Node *def,bool flagR);
+FieldList* defVisit(Node *def,Type *outlayer);
 
 void structDec(Node *ssp);
 

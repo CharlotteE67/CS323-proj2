@@ -34,7 +34,7 @@ Node *decListGetVarDec(Node *decList) {
     return decList->child[0]->child[0];
 }
 
-FieldList *defPrimitiveType(Node *def, bool flagR) {
+FieldList *defPrimitiveType(Node *def, Type *outlayer) {
     Node *decList = def->child[1];
     string dataType = defGetTypeName(def);
     FieldList *head = new FieldList();
@@ -44,9 +44,10 @@ FieldList *defPrimitiveType(Node *def, bool flagR) {
         Node *varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
 
-        if (flagR) {
+        if (outlayer!=nullptr) {
             //struct need, return fieldList
             FieldList *next = new FieldList(varName, symbolTable[varName], nullptr);
+            symbolTable[varName]->set_typePtr(outlayer);
             ptr->next = next;
             ptr = ptr->next;
         } else {
@@ -79,7 +80,7 @@ FieldList *defPrimitiveType(Node *def, bool flagR) {
 
 }
 
-FieldList *defStructType(Node *def, bool flagR) {
+FieldList *defStructType(Node *def, Type *outlayer) {
     Node *decList = def->child[1];
     string structName = defGetStructName(def);
 
@@ -89,8 +90,9 @@ FieldList *defStructType(Node *def, bool flagR) {
     while (true) {
         Node *varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
-        if (flagR) {
+        if (outlayer!=nullptr) {
             //struct need, return fieldList
+            symbolTable[varName]->set_typePtr(outlayer);
             FieldList *next = new FieldList(varName, symbolTable[varName], nullptr);
             ptr->next = next;
             ptr = ptr->next;
@@ -130,12 +132,12 @@ FieldList *defStructType(Node *def, bool flagR) {
 /* Def -> enter
     local var
 */
-FieldList *defVisit(Node *def, bool flagR) {
+FieldList *defVisit(Node *def, Type *outlayer) {
     if (defGetTypeName(def) == "StructSpecifier") {
         //struct
-        return defStructType(def, flagR);
+        return defStructType(def, outlayer);
     } else {
-        return defPrimitiveType(def, flagR);
+        return defPrimitiveType(def, outlayer);
     }
 }
 
@@ -228,6 +230,10 @@ void structDec(Node *ssp) {
     FieldList *ptr = head;
     Node *defL = ssp->child[3];
 
+    Type *stu = new Type(stuName,CATEGORY::STRUCTURE);
+    symbolTable[stuName] = stu;
+    
+
     if (symbolTable.count(stuName) != 0) {
         //struct redefine
         semanticErrors(15, ssp->get_lineNo());
@@ -236,7 +242,7 @@ void structDec(Node *ssp) {
     while (!defL->child.empty()) {
         Node *def = defL->child[0];
         //def visit
-        FieldList *defStu = defVisit(def, true);
+        FieldList *defStu = defVisit(def, stu);
         while (ptr->next != nullptr) {
             ptr = ptr->next;
         }
@@ -244,8 +250,9 @@ void structDec(Node *ssp) {
         defL = defL->child[1];
     }
 
-    Type *stu = new Type(stuName, head->next);
-    symbolTable[stuName] = stu;
+    stu->set_fieldList(head->next);
+    // Type *stu = new Type(stuName, head->next);
+    // symbolTable[stuName] = stu;
 
 }
 
