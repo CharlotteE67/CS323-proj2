@@ -206,7 +206,12 @@ Exp:
     	checkFuncNoDef($$, $1);
     	}
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
-    | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($3->get_varType());}
+    | Exp DOT ID { 
+        vector<Node*> vec = {$1, $2, $3}; 
+        $$ = new Node("Exp", @$.first_line, vec); 
+        $$->set_varType($3->get_varType());
+        checkStructDot($$);
+        }
     | ID { 
         vector<Node*> vec = {$1}; 
         $$ = new Node("Exp", @$.first_line, vec);

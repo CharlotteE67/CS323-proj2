@@ -28,6 +28,8 @@ bool isMatchedType(Type *t1, Type *t2);
 
 void checkVarDef(Node *id, Node *parent);
 
+void checkStructDot(Node *exp);
+
 void funcDec(Node *exDef);
 
 void funcArgDec(Node *varList);

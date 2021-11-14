@@ -375,12 +375,20 @@ void checkVarDef(Node *id, Node *parent) {
     parent->set_varType(symbolTable[name]);
 }
 
-/*
-*   check type 10: array indexing
-*       VarDec -> ID| VarDec LB INT RB
+/**
+*   check type 13: accessing members of a non-structure variable.
+*   EXP -> EXP DOT ID
 */
-void checkIsArray() {
-
+void checkStructDot(Node *exp) {
+    Type *base = exp->child[0]->get_varType();
+    Node * id = exp->child[2];
+    string subName = id->get_name();
+    //check valid
+    if(base!=symbolTable[subName]->get_typePtr()){
+        semanticErrors(13,exp->get_lineNo());
+    }else{
+        exp->set_varType(symbolTable[subName]);
+    }
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
