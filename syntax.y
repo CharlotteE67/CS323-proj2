@@ -210,7 +210,7 @@ Exp:
     	}
     | Exp LB Exp RB {
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
-    	checkIndexType($3);
+    	checkIndexType($1, $3);
     	checkArrayType($$, $1);
     	}
     | Exp DOT ID { 

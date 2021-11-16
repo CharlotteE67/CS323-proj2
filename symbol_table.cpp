@@ -521,9 +521,23 @@ void checkMathOp(Node *left, Node *right, Node *parent) {
 }
 
 /* Exp -> Exp LB Exp RB */
-void checkIndexType(Node *index) {
+void checkIndexType(Node *arr, Node *index) {
     if (index->get_varType()->type.pri != Primitive::INT)
         semanticErrors(12, index->get_lineNo());
+    else
+        checkIndexBound(arr, index);
+}
+
+/* arrayIndexOutOfBound, but only for INT */
+void checkIndexBound(Node *arr, Node *index) {
+    if (index->get_varType()->name == "") {
+        int actual_index = index->child[0]->get_intVal();
+        int bound = arr->get_varType()->type.arr->size;
+        if (actual_index >= bound) {
+            printf("Error at Line %d: Index Out Of Bound. %d out of limitation %d.\n",
+                   arr->get_lineNo(), actual_index, bound);
+        }
+    }
 }
 
 /* Exp -> Exp LB Exp RB */
@@ -611,7 +625,7 @@ bool isMatchedType(Type *t1, Type *t2) {
     }
     if (t1->category == CATEGORY::ARRAY) {
         Array *a1 = t1->type.arr, *a2 = t2->type.arr;
-        return (a1->size != a2->size) && isMatchedType(a1->base, a2->base);
+        return (a1->size == a2->size) && isMatchedType(a1->base, a2->base);
     }
 
     return t1->type.pri == t2->type.pri;
