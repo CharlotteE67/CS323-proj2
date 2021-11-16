@@ -1,17 +1,17 @@
-int foo()
+struct Child1
 {
-  int a = 10;
-  return a;
-}
-int test_2_o01(int a, int b)
+  int name;
+  struct A1 {char ch1;} sa1;
+};
+struct Child2
 {
-  int c;
-  c = foo();
-  if (b > 0)
-  {
-    int a = c + 3;
-    b = b - a;
-  }
-  a = a + b;
-  return a;
+	int id;
+  struct A2 {char ch2;} sa2;
+};
+int test_2_r15()
+{
+  struct Child1 c1;
+  struct Child2 c2;
+  c1 = c2;
+  return 0;
 }

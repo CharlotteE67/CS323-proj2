@@ -119,7 +119,7 @@ FieldList *defStructType(Node *def, Type *outlayer) {
                 Type *t = new Type(varName,CATEGORY::STRUCTVAR);
                 t->set_structType(symbolTable[structName]);
                 symbolTable[varName] = t;
-                
+
             } else {
                 //array type
                 Type *base = symbolTable[structName];
@@ -232,13 +232,14 @@ string getCatType(CATEGORY cat){
     switch (cat) {
         case CATEGORY::PRIMITIVE:
             return "primitive";
-            break;
         case CATEGORY::ARRAY:
             return "array";
-            break;
         case CATEGORY::STRUCTURE:
             return "struct";
-            break;
+        case CATEGORY::STRUCTVAR:
+            return "structvar";
+        case CATEGORY::FUNCTION:
+            return "function";
     }
 }
 
@@ -659,17 +660,30 @@ void semanticErrors(int typeID, int lineNo) {
  * return a bool value
  */
 bool isMatchedType(Type *t1, Type *t2) {
+    Type *v1 = t1, *v2 = t2;
     if (t1 == nullptr || t2 == nullptr) return false;
     if (t1->category != t2->category) return false;
-    // todo: structure eq
-    if (t1->category == CATEGORY::STRUCTURE) {
-        return symbolTable[t1->name]->name == symbolTable[t2->name]->name;
-    }
     if (t1->category == CATEGORY::ARRAY) {
         Array *a1 = t1->type.arr, *a2 = t2->type.arr;
         return (a1->size != a2->size) && isMatchedType(a1->base, a2->base);
     }
-
-    return t1->type.pri == t2->type.pri;
+    if (t1->category == CATEGORY::PRIMITIVE) {
+        return t1->type.pri == t2->type.pri;
+    }
+    if (t1->category == CATEGORY::STRUCTURE) {
+        FieldList *f1, *f2;
+        f1 = t1->get_fieldList();
+        f2 = t2->get_fieldList();
+        while (f1 != nullptr && f2 != nullptr) {
+            if (!isMatchedType(f1->type, f2->type)) {
+                return false;
+            }
+            f1 = f1->next;
+            f2 = f2->next;
+        }
+        return (f1 == nullptr) && (f2 == nullptr);
+    }
+    // struct var OR function
+    return false;
 }
 
