@@ -385,7 +385,7 @@ void checkStructDot(Node *exp) {
     Node * id = exp->child[2];
     string subName = id->get_name();
     //check valid
-    if(base!=symbolTable[subName]->get_typePtr()){
+    if(symbolTable.count(subName)==0||base!=symbolTable[subName]->get_typePtr()){
         semanticErrors(13,exp->get_lineNo());
     }else{
         exp->set_varType(symbolTable[subName]);
