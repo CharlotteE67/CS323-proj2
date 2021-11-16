@@ -422,7 +422,7 @@ void funcDec(Node *exDef) {
     if (funDec->child.size() == 4) {
         args = getArgList(funDec->child[2]);
     }
-    funcType->type.fl = args;
+    funcType->set_argsList(args);
 
     checkFuncReturn(exDef);
 }
@@ -689,6 +689,9 @@ bool isMatchedType(Type *t1, Type *t2) {
     }
     if (t1->category == CATEGORY::PRIMITIVE) {
         return t1->type.pri == t2->type.pri;
+    }
+    if (t1->category == CATEGORY::STRUCTVAR) {
+        return isMatchedType(t1->get_structType(), t2->get_structType());
     }
     if (t1->category == CATEGORY::STRUCTURE) {
         FieldList *f1, *f2;

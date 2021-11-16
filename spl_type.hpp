@@ -53,6 +53,8 @@ public:
 
     void set_fieldList(FieldList *field){type.fl = field;}
     FieldList* get_fieldList(){return type.fl;}
+
+    void set_argsList(FieldList *fieldList){ type.fl = fieldList; }
     FieldList* get_argsList(){return type.fl;}
 
 };

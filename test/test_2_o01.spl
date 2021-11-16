@@ -6,7 +6,7 @@ struct Child1
 struct Child2
 {
 	int id;
-  struct A2 {char ch2;} sa2;
+  struct A2 {int ch2;} sa2;
 };
 int test_2_r15()
 {
