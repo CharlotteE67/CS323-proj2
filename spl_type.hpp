@@ -46,6 +46,7 @@ public:
     void set_typePtr(Type *ptr){typePointer = ptr;}
 
     void set_fieldList(FieldList *field){type.fl = field;}
+    FieldList* get_fieldList(){return type.fl;}
 
 };
 

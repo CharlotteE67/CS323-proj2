@@ -396,11 +396,20 @@ void checkStructDot(Node *exp) {
     Node * id = exp->child[2];
     string subName = id->get_name();
     //check valid
-    if(symbolTable.count(subName)==0||base!=symbolTable[subName]->get_typePtr()){
-        semanticErrors(13,exp->get_lineNo());
-    }else{
-        exp->set_varType(symbolTable[subName]);
+    FieldList *fl = base->get_fieldList();
+//    if(symbolTable.count(subName)==0||base!=symbolTable[subName]->get_typePtr()){
+//
+//    }else{
+//
+//    }
+    while(fl!= nullptr){
+        if(fl->name==subName){
+            exp->set_varType(symbolTable[subName]);
+            return;
+        }
+        fl = fl->next;
     }
+    semanticErrors(13,exp->get_lineNo());
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
