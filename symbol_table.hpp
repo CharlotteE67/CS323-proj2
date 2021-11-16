@@ -50,7 +50,7 @@ void checkCompOp(Node *left, Node *right, Node *parent);
 void checkMathOp(Node *left, Node *right, Node *parent);
 
 void checkIndexType(Node *arr, Node *index);
-void checkIndexBound(Node *arr, Node *index)
+void checkIndexBound(Node *arr, Node *index);
 
 void checkArrayType(Node *root, Node *node);
 
