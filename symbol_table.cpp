@@ -407,6 +407,8 @@ void checkStructDot(Node *exp) {
 void checkFuncNoDef(Node *root, Node *node) {
     if (symbolTable.count(node->get_name()) == 0) {
         semanticErrors(2, node->get_lineNo());
+        root->set_varType(nullptr);
+        return;
     }
     root->set_varType(symbolTable[node->get_name()]);
 }
@@ -499,7 +501,7 @@ void checkMathOp(Node *left, Node *right, Node *parent) {
 
 /* Exp -> Exp LB Exp RB */
 void checkIndexType(Node *index) {
-    if (index->get_type() != Node_TYPE::INT)
+    if (index->get_varType()->type.pri != Primitive::INT)
         semanticErrors(12, index->get_lineNo());
 }
 
