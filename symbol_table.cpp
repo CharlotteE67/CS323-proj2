@@ -74,7 +74,7 @@ FieldList *defPrimitiveType(Node *def, Type *outlayer) {
             }
             if (dec->child.size() == 3){
 
-                if (!isMatchedType(symbolTable[varName], dec->child[2]->get_varType())) {
+                if (dec->child[2]->get_varType() != nullptr && !isMatchedType(symbolTable[varName], dec->child[2]->get_varType())) {
                     semanticErrors(5, varDec->get_lineNo());
                 }
                 // child[0].get_varType()== child[2].get_varType() ?
