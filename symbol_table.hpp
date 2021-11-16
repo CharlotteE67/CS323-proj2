@@ -34,6 +34,8 @@ void funcDec(Node *exDef);
 
 void funcArgDec(Node *varList);
 
+FieldList* getArgList(Node *varList);
+
 void checkRvalueOnLeft(Node *left, int lineNum);
 void checkFuncNoDef(Node *root, Node *node);
 
