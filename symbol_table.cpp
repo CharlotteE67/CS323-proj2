@@ -271,12 +271,13 @@ void structDec(Node *ssp) {
     Node *defL = ssp->child[3];
 
     Type *stu = new Type(stuName,CATEGORY::STRUCTURE);
-    symbolTable[stuName] = stu;
-    
+
 
     if (symbolTable.count(stuName) != 0) {
         //struct redefine
         semanticErrors(15, ssp->get_lineNo());
+    } else {
+        symbolTable[stuName] = stu;
     }
 
     while (!defL->child.empty()) {
@@ -395,7 +396,7 @@ void checkStructDot(Node *exp) {
     Node * id = exp->child[2];
     string subName = id->get_name();
     //check valid
-    if(base!=symbolTable[subName]->get_typePtr()){
+    if(symbolTable.count(subName)==0||base!=symbolTable[subName]->get_typePtr()){
         semanticErrors(13,exp->get_lineNo());
     }else{
         exp->set_varType(symbolTable[subName]);
