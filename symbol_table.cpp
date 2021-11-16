@@ -263,12 +263,13 @@ void structDec(Node *ssp) {
     Node *defL = ssp->child[3];
 
     Type *stu = new Type(stuName,CATEGORY::STRUCTURE);
-    symbolTable[stuName] = stu;
-    
+
 
     if (symbolTable.count(stuName) != 0) {
         //struct redefine
         semanticErrors(15, ssp->get_lineNo());
+    } else {
+        symbolTable[stuName] = stu;
     }
 
     while (!defL->child.empty()) {
