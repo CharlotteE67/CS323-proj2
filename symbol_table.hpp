@@ -34,6 +34,9 @@ void funcDec(Node *exDef);
 
 void funcArgDec(Node *varList);
 
+FieldList* getArgList(Node *varList);
+
+void checkRvalueOnLeft(Node *left, int lineNum);
 void checkFuncNoDef(Node *root, Node *node);
 
 void checkRvalueOnLeft(Node *left);
@@ -46,8 +49,7 @@ void checkCompOp(Node *left, Node *right, Node *parent);
 
 void checkMathOp(Node *left, Node *right, Node *parent);
 
-void checkIndexType(Node *arr, Node *index);
-void checkIndexBound(Node *arr, Node *index);
+void checkIndexType(Node *index);
 
 void checkArrayType(Node *root, Node *node);
 

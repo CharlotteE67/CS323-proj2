@@ -88,6 +88,7 @@ FieldList *defPrimitiveType(Node *def, Type *outlayer) {
 
 }
 
+// todo: check assign Exp
 FieldList *defStructType(Node *def, Type *outlayer) {
     Node *decList = def->child[1];
     string structName = defGetStructName(def);
@@ -244,7 +245,8 @@ string getCatType(CATEGORY cat){
 void dfsCheckReturn(Node *root, Type *type) {
     if (root == nullptr || root->child.empty()) return;
     if (root->child[0]->get_name() == "RETURN") {
-        if (!isMatchedType(type, root->child[1]->get_varType())) {
+        Type *ret = root->child[1]->get_varType();
+        if (!isMatchedType(type, ret) && ret != nullptr) {
             semanticErrors(8, root->get_lineNo());
         }
         return;
@@ -258,7 +260,7 @@ void dfsCheckReturn(Node *root, Type *type) {
 void checkFuncReturn(Node *extDef) {
     Node *stmtList = extDef->child[2]->child[2];
     Type *deft;
-    deft = symbolTable[extDef->child[1]->child[0]->get_name()];
+    deft = symbolTable[extDef->child[1]->child[0]->get_name()]->typePointer;
 
     dfsCheckReturn(stmtList, deft);
 }
@@ -346,6 +348,47 @@ void funcArgDec(Node *varList) {
 
 }
 
+
+FieldList* getArgList(Node *varList) {
+    FieldList head, *tail;
+    tail = &head;
+    while (true) {
+        Node *paraD = varList->child[0];
+
+        Node *varDec = paraD->child[1];
+        Node *type = paraD->child[0]->child[0];
+        Type *ptr;
+        string varName = vardecGetName(varDec);
+        if (type->child.size() == 0) { // TPYE
+            ptr = new Type(varName, type->get_name());
+        } else { // StructSpecifier
+            ptr = symbolTable[type->child[1]->get_name()];
+        }
+
+        if (varDec->child.size() == 1) {
+            FieldList *fl = new FieldList(varName, ptr, nullptr);
+            tail->next = fl;
+            tail = fl;
+        } else {
+            Type *base = ptr;
+            while (varDec->child.size() != 1) {
+                int arrSize = varDec->child[2]->get_intVal();
+                Array *arr = new Array(base, arrSize);
+                Type *upper = new Type(varName, arr);
+                base = upper;
+                varDec = varDec->child[0];
+            }
+            FieldList *fl = new FieldList(varName, base, nullptr);
+            tail->next = fl;
+            tail = fl;
+        }
+
+        if (varList->child.size() == 1) { break; }
+        varList = varList->child[2];
+    }
+    return head.next;
+}
+
 /*
 *   ExtDef -> Specifier FunDec CompSt
 *   load new func into symbol table
@@ -359,20 +402,28 @@ void funcDec(Node *exDef) {
         return;
     }
 
+    Type *funcType = new Type(funcName, CATEGORY::FUNCTION);
+
     if (defGetTypeName(exDef) == "StructSpecifier") {
         //struct
         returnName = defGetStructName(exDef);
-        symbolTable[funcName] = symbolTable[returnName];
+        funcType->typePointer = new Type(funcName, symbolTable[returnName]);
     } else {
         returnName = defGetTypeName(exDef);
-        symbolTable[funcName] = new Type(funcName, returnName);
+        funcType->typePointer = new Type(funcName, returnName);
     }
 
+    symbolTable[funcName] = funcType;
+
     //function arg
+    Node *funDec = exDef->child[1];
+    FieldList *args = nullptr;
+    if (funDec->child.size() == 4) {
+        args = getArgList(funDec->child[2]);
+    }
+    funcType->type.fl = args;
 
     checkFuncReturn(exDef);
-
-
 }
 
 /*
@@ -431,7 +482,12 @@ void checkFuncNoDef(Node *root, Node *node) {
         root->set_varType(nullptr);
         return;
     }
-    root->set_varType(symbolTable[node->get_name()]);
+    if (symbolTable[node->get_name()]->category != CATEGORY::FUNCTION) {
+        semanticErrors(11, node->get_lineNo());
+        root->set_varType(nullptr);
+        return;
+    }
+    root->set_varType(symbolTable[node->get_name()]->typePointer);
 }
 
 
