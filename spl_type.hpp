@@ -7,7 +7,7 @@
 using namespace std;
 
 enum class CATEGORY {
-    PRIMITIVE, ARRAY, STRUCTURE
+    PRIMITIVE, ARRAY, STRUCTURE, FUNCTION
 };
 enum class Primitive {
     INT,
@@ -32,13 +32,15 @@ public:
     string name;
     CATEGORY category;
     dTypes type;
-    Type *typePointer = nullptr; // For func:arg list; For struct number: nearest outlayer struct
+    Type *typePointer = nullptr; // For func: return type; For struct number: nearest outlayer struct
 
     Type();
 
     Type(string name, string pri);
 
     Type(string name, Array *arr);
+
+    Type(string name, Type *rt);
 
     Type(string name, CATEGORY cat);
 

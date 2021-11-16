@@ -15,6 +15,10 @@ Type::Type(string name, Array* arr): name(name), category(CATEGORY::ARRAY){
     type.arr = arr;
 }
 
+Type::Type(string name, Type *rt): name(name), category(CATEGORY::FUNCTION) {
+    typePointer = rt;
+}
+
 Type::Type(string name, CATEGORY ca): name(name), category(ca){
     
 }
