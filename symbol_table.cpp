@@ -349,8 +349,8 @@ void funcArgDec(Node *varList) {
 
 }
 
-
-FieldList* getArgList(Node *varList) {
+// FunDec -> varList
+FieldList* getFunDecArgs(Node *varList) {
     FieldList head, *tail;
     tail = &head;
     while (true) {
@@ -391,6 +391,20 @@ FieldList* getArgList(Node *varList) {
 }
 
 /*
+ * Args:
+    Exp COMMA Args
+    | Exp
+ */
+FieldList *getFunCallArgs(Node *args) {
+    FieldList *fieldList;
+    fieldList = new FieldList("args", args->child[0]->get_varType(), nullptr);
+    if (args->child.size() == 3) {
+        fieldList->next = getFunCallArgs(args->child[2]);
+    }
+    return fieldList;
+}
+
+/*
 *   ExtDef -> Specifier FunDec CompSt
 *   load new func into symbol table
 */
@@ -420,7 +434,7 @@ void funcDec(Node *exDef) {
     Node *funDec = exDef->child[1];
     FieldList *args = nullptr;
     if (funDec->child.size() == 4) {
-        args = getArgList(funDec->child[2]);
+        args = getFunDecArgs(funDec->child[2]);
     }
     funcType->set_argsList(args);
 
@@ -477,20 +491,29 @@ void checkStructDot(Node *exp) {
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
-void checkFuncNoDef(Node *root, Node *node) {
-    if (symbolTable.count(node->get_name()) == 0) {
-        semanticErrors(2, node->get_lineNo());
+void checkFuncCall(Node *root, Node *id, Node *args) {
+    if (symbolTable.count(id->get_name()) == 0) {
+        semanticErrors(2, id->get_lineNo());
         root->set_varType(nullptr);
         return;
     }
-    if (symbolTable[node->get_name()]->category != CATEGORY::FUNCTION) {
-        semanticErrors(11, node->get_lineNo());
+    if (symbolTable[id->get_name()]->category != CATEGORY::FUNCTION) {
+        semanticErrors(11, id->get_lineNo());
         root->set_varType(nullptr);
         return;
     }
-    root->set_varType(symbolTable[node->get_name()]->typePointer);
-}
+    root->set_varType(symbolTable[id->get_name()]->typePointer);
 
+    FieldList *f1 = symbolTable[id->get_name()]->get_argsList(), *f2 = getFunCallArgs(args);
+    Type t1(id->get_name(), CATEGORY::STRUCTURE), t2(id->get_name(), CATEGORY::STRUCTURE);
+    t1.set_fieldList(f1), t2.set_fieldList(f2);
+
+    if (!isMatchedType(&t1, &t2)) {
+        semanticErrors(9, id->get_lineNo());
+        return;
+    }
+
+}
 
 void checkRvalueOnLeft(Node *left) {
     // single ID

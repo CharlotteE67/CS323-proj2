@@ -34,10 +34,12 @@ void funcDec(Node *exDef);
 
 void funcArgDec(Node *varList);
 
-FieldList* getArgList(Node *varList);
+FieldList* getFunDecArgs(Node *varList);
+FieldList* getFunCallArgs(Node *args);
 
 void checkRvalueOnLeft(Node *left, int lineNum);
-void checkFuncNoDef(Node *root, Node *node);
+void checkFuncCall(Node *root, Node *id, Node *args);
+
 
 void checkRvalueOnLeft(Node *left);
 

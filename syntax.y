@@ -202,11 +202,11 @@ Exp:
     | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($2, $2, $$);}
     | ID LP Args RP {
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
-    	checkFuncNoDef($$, $1);
+    	checkFuncCall($$, $1, $3);
     	}
     | ID LP RP {
     	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
-    	checkFuncNoDef($$, $1);
+    	checkFuncCall($$, $1, nullptr);
     	}
     | Exp LB Exp RB {
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
