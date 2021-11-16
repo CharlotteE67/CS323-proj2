@@ -96,6 +96,8 @@ public:
 
 ​		struct declare name misuse
 
+​		(exp)
+
 ​		When using INT(not ID) to access array, we can detect whether it's out of bound.
 
 <img src="SID-Project2.assets/image-20211116214809272.png" alt="image-20211116214809272" style="zoom:50%;" />

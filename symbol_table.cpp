@@ -496,12 +496,18 @@ void checkRvalueOnLeft(Node *left) {
     if (left->child.size() == 1 && left->child[0]->get_type() == Node_TYPE::ID) {
         return;
     }
+    // (a = b).name = 1;
     // Exp.ID
     if (left->child.size() == 3 && left->child[0]->get_name() == "Exp" &&
         left->child[1]->get_name() == "DOT" && left->child[2]->get_type() == Node_TYPE::ID) {
         return;
     }
-    // with bracket
+    // (Exp)
+    if (left->child.size() == 3 && left->child[0]->get_name() == "LP" &&
+        left->child[2]->get_name() == "RP" && left->child[2]->get_name() == "Exp") {
+        return;
+    }
+    // with bracket []
     if (left->child.size() == 4 && left->child[0]->get_name() == "Exp" && left->child[1]->get_name() == "LB"
         && left->child[2]->get_name() == "Exp" && left->child[3]->get_name() == "RB") {
         return;
