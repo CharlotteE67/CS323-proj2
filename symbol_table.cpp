@@ -450,7 +450,7 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
         parent->set_varType(nullptr);
         return;
     }
-    if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
+    if (left->get_varType()->type.pri != Primitive::INT || right->get_varType()->type.pri != Primitive::INT) {
         semanticErrors(7, left->get_lineNo());
     }
     parent->set_varType(new Type(parent->get_name(), "int"));
@@ -464,8 +464,8 @@ void checkCompOp(Node *left, Node *right, Node *parent) {
         return;
     }
     // int float
-    if ((left->get_type() != Node_TYPE::INT && left->get_type() != Node_TYPE::FLOAT)
-        || (right->get_type() != Node_TYPE::INT && right->get_type() != Node_TYPE::FLOAT)) {
+    if ((left->get_varType()->type.pri != Primitive::INT && left->get_varType()->type.pri == Primitive::FLOAT)
+        || (right->get_varType()->type.pri != Primitive::INT && right->get_varType()->type.pri == Primitive::FLOAT)) {
         semanticErrors(7, left->get_lineNo());
     }
     // assign type to parent
@@ -479,8 +479,8 @@ void checkMathOp(Node *left, Node *right, Node *parent) {
         parent->set_varType(nullptr);
         return;
     }
-    if ((left->get_type() == Node_TYPE::INT && right->get_type() == Node_TYPE::INT)
-        || (left->get_type() == Node_TYPE::FLOAT && right->get_type() == Node_TYPE::FLOAT)) {
+    if ((left->get_varType()->type.pri == Primitive::INT && right->get_varType()->type.pri == Primitive::INT)
+        || (left->get_varType()->type.pri == Primitive::FLOAT && right->get_varType()->type.pri == Primitive::FLOAT)) {
         parent->set_varType(left->get_varType());
     } else {
         semanticErrors(7, left->get_lineNo());
@@ -505,6 +505,12 @@ void checkIndexType(Node *index) {
 
 /* Exp -> Exp LB Exp RB */
 void checkArrayType(Node *root, Node *node) {
+    if (node->get_varType()->category != CATEGORY::ARRAY) {
+        semanticErrors(10, node->get_lineNo());
+        root->set_varType(nullptr);
+    } else{
+        root->set_varType(node->get_varType()->type.arr->base);
+    }
 //    Type *type = symbolTable[node->child[0]->get_name()];
 //    if (type->category != CATEGORY::ARRAY)
 //        semanticErrors(10, node->get_lineNo());
