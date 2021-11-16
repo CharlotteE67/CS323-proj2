@@ -45,4 +45,8 @@ void checkBoolOp(Node *left, Node *right, Node *parent);
 
 void checkMathOp(Node *left, Node *right, Node *parent);
 
+void checkIndexType(Node *index);
+
+void checkArrayType(Node *root, Node *node);
+
 #endif

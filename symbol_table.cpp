@@ -41,6 +41,7 @@ FieldList *defPrimitiveType(Node *def, Type *outlayer) {
     FieldList *ptr = head;
 
     while (true) {
+        Node *dec = decList->child[0];
         Node *varDec = decListGetVarDec(decList);
         string varName = vardecGetName(varDec);
 
@@ -70,6 +71,13 @@ FieldList *defPrimitiveType(Node *def, Type *outlayer) {
                     varDec = varDec->child[0];
                 }
                 symbolTable[varName] = base;
+            }
+            if (dec->child.size() == 3){
+
+                if (!isMatchedType(symbolTable[varName], dec->child[2]->get_varType())) {
+                    semanticErrors(5, varDec->get_lineNo());
+                }
+                // child[0].get_varType()== child[2].get_varType() ?
             }
         }
 
@@ -371,8 +379,11 @@ void checkVarDef(Node *id, Node *parent) {
     string name = id->get_name();
     if (symbolTable.count(name) == 0) {
         semanticErrors(1, id->get_lineNo());
+        // set null
+        parent->set_varType(nullptr);
+    } else{
+        parent->set_varType(symbolTable[name]);
     }
-    parent->set_varType(symbolTable[name]);
 }
 
 /**
@@ -420,6 +431,10 @@ void checkRvalueOnLeft(Node *left) {
 
 /* Exp -> Exp ASSIGN Exp */
 void checkAssignOp(Node *left, Node *right, Node *parent) {
+    if (left->get_varType() == nullptr || right->get_varType() == nullptr) {
+        parent->set_varType(nullptr);
+        return;
+    }
     if (!isMatchedType(left->get_varType(), right->get_varType())) {
         semanticErrors(5, left->get_lineNo());
     }
@@ -430,6 +445,10 @@ void checkAssignOp(Node *left, Node *right, Node *parent) {
 /* Exp -> Exp AND Exp
        -> Exp OR Exp */
 void checkBoolOp(Node *left, Node *right, Node *parent) {
+    if (left->get_varType() == nullptr || right->get_varType() == nullptr) {
+        parent->set_varType(nullptr);
+        return;
+    }
     if (left->get_type() != Node_TYPE::INT || right->get_type() != Node_TYPE::INT) {
         semanticErrors(7, left->get_lineNo());
     }
@@ -437,14 +456,58 @@ void checkBoolOp(Node *left, Node *right, Node *parent) {
 }
 
 /* Exp -> | Exp LT Exp | Exp LE Exp | Exp GT Exp
-    | Exp GE Exp | Exp NE Exp | Exp EQ Exp | Exp PLUS Exp
-    | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp */
-void checkMathOp(Node *left, Node *right, Node *parent) {
-    if (!isMatchedType(left->get_varType(), right->get_varType())) {
+    | Exp GE Exp | Exp NE Exp | Exp EQ Exp */
+void checkCompOp(Node *left, Node *right, Node *parent) {
+    if (left->get_varType() == nullptr || right->get_varType() == nullptr) {
+        parent->set_varType(nullptr);
+        return;
+    }
+    // int float
+    if ((left->get_type() != Node_TYPE::INT && left->get_type() != Node_TYPE::FLOAT)
+        || (right->get_type() != Node_TYPE::INT && right->get_type() != Node_TYPE::FLOAT)) {
         semanticErrors(7, left->get_lineNo());
     }
     // assign type to parent
-    parent->set_varType(left->get_varType());
+    parent->set_varType(new Type(parent->get_name(), "int"));
+}
+
+/* Exp ->  Exp PLUS Exp | Exp MINUS Exp | Exp MUL Exp | Exp DIV Exp
+          | MINUS Exp %prec UMINUS */
+void checkMathOp(Node *left, Node *right, Node *parent) {
+    if (left->get_varType() == nullptr || right->get_varType() == nullptr) {
+        parent->set_varType(nullptr);
+        return;
+    }
+    if ((left->get_type() == Node_TYPE::INT && right->get_type() == Node_TYPE::INT)
+        || (left->get_type() == Node_TYPE::FLOAT && right->get_type() == Node_TYPE::FLOAT)) {
+        parent->set_varType(left->get_varType());
+    } else {
+        semanticErrors(7, left->get_lineNo());
+        parent->set_varType(nullptr);
+    }
+//    if (left->get_type() == Node_TYPE::FLOAT){
+//        parent->set_varType(left->get_varType());
+//    } else if (right->get_type() == Node_TYPE::FLOAT) {
+//        parent->set_varType(right->get_type());
+//    } else{
+//        parent->set_varType(left->get_varType());
+//    }
+    // assign type to parent
+//    parent->set_varType(left->get_varType());
+}
+
+/* Exp -> Exp LB Exp RB */
+void checkIndexType(Node *index) {
+    if (index->get_type() != Node_TYPE::INT)
+        semanticErrors(12, index->get_lineNo());
+}
+
+/* Exp -> Exp LB Exp RB */
+void checkArrayType(Node *root, Node *node) {
+//    Type *type = symbolTable[node->child[0]->get_name()];
+//    if (type->category != CATEGORY::ARRAY)
+//        semanticErrors(10, node->get_lineNo());
+//    root->set_varType(type->);
 }
 
 void semanticErrors(int typeID, int lineNo) {
