@@ -1,10 +1,15 @@
-struct a{
-    int x;
-    int y;
-    int z;
+struct a {
+    int aa;
 };
-
+struct b{
+    struct a ba;
+};
+struct c{
+    struct a ca;
+};
 int main(){
-    struct a aa;
-    struct m n;
+    struct b B;
+    struct c C;
+    b.ba = ca;
+
 }

@@ -115,7 +115,10 @@ FieldList *defStructType(Node *def, Type *outlayer) {
             }
             if (varDec->child.size() == 1) {
                 //vardec -> id
-                symbolTable[varName] = symbolTable[structName];
+                Type *t = new Type(varName,CATEGORY::STRUCTVAR);
+                t->set_structType(symbolTable[structName]);
+                symbolTable[varName] = t;
+                
             } else {
                 //array type
                 Type *base = symbolTable[structName];
@@ -382,7 +385,15 @@ void checkVarDef(Node *id, Node *parent) {
         semanticErrors(1, id->get_lineNo());
         // set null
         parent->set_varType(nullptr);
-    } else{
+    } else if(symbolTable[name]->get_typePtr()!=nullptr){
+        //inside struct, ignore?
+        semanticErrors(20,id->get_lineNo());
+    }else if(symbolTable[name]->category==CATEGORY::STRUCTURE){
+        semanticErrors(21,id->get_lineNo());
+    }else if(symbolTable[name]->category==CATEGORY::STRUCTVAR){
+        parent->set_varType(symbolTable[name]->get_structType());
+    }
+    else{
         parent->set_varType(symbolTable[name]);
     }
 }
@@ -393,6 +404,7 @@ void checkVarDef(Node *id, Node *parent) {
 */
 void checkStructDot(Node *exp) {
     Type *base = exp->child[0]->get_varType();
+    if(base== nullptr){return;}
     Node * id = exp->child[2];
     string subName = id->get_name();
     //check valid
@@ -576,7 +588,12 @@ void semanticErrors(int typeID, int lineNo) {
         case 15:
             printf("Error type 15 at Line %d: structure type redefined.\n", lineNo);//done
             break;
-
+        case 20:
+            printf("Error type 20 at Line %d: accessing inside number of struct.\n", lineNo);//done
+            break;
+        case 21:
+            printf("Error type 21 at Line %d: struct declare name misuse.\n", lineNo);//done
+            break;
         default:
             break;
     }

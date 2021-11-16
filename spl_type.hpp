@@ -7,7 +7,7 @@
 using namespace std;
 
 enum class CATEGORY {
-    PRIMITIVE, ARRAY, STRUCTURE, FUNCTION
+    PRIMITIVE, ARRAY, STRUCTURE,STRUCTVAR, FUNCTION
 };
 enum class Primitive {
     INT,
@@ -25,6 +25,7 @@ union dTypes {
     Primitive pri;
     Array *arr;
     FieldList *fl;
+    Type *st;
 };
 
 class Type {
@@ -43,6 +44,9 @@ public:
     Type(string name, Type *rt);
 
     Type(string name, CATEGORY cat);
+
+    void set_structType(Type *t){type.st = t;}
+    Type *get_structType(){return type.st;}
 
     Type* get_typePtr(){return typePointer;}
     void set_typePtr(Type *ptr){typePointer = ptr;}
