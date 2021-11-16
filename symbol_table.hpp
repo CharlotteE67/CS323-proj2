@@ -43,7 +43,7 @@ void checkAssignOp(Node *left, Node *right, Node *parent);
 
 void checkBoolOp(Node *left, Node *right, Node *parent);
 
-void checkCompOp(Node *left, Node *right, Node *parent)
+void checkCompOp(Node *left, Node *right, Node *parent);
 
 void checkMathOp(Node *left, Node *right, Node *parent);
 
