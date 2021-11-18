@@ -716,6 +716,8 @@ bool isMatchedType(Type *t1, Type *t2) {
         return t1->type.pri == t2->type.pri;
     }
     if (t1->category == CATEGORY::STRUCTVAR) {
+        if (t1->get_structType() == t2->get_structType())
+            return true;
         return isMatchedType(t1->get_structType(), t2->get_structType());
     }
     if (t1->category == CATEGORY::STRUCTURE) {
