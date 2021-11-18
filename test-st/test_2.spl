@@ -1,0 +1,21 @@
+struct A {
+    int ia;
+};
+
+struct B{
+    float fb;
+};
+
+struct C{
+    struct A ca;
+};
+
+struct D {
+    struct B db;
+};
+
+int main(){
+    struct B sb;
+    struct D sd;
+    sb = sd;
+}

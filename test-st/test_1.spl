@@ -1,0 +1,19 @@
+struct A {
+    int aa;
+};
+
+struct B{
+    int barr[7][7][7][7];
+    struct A ba;
+};
+
+struct C{
+    int carr[7][7][7][7];
+    struct A ca;
+};
+
+int main(){
+    struct B sb;
+    struct C sc;
+    sb = sc;
+}
