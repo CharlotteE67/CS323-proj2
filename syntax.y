@@ -182,6 +182,7 @@ Dec:
 Exp:
     Exp ASSIGN Exp {
     	vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec);
+    	$$->set_assignable(1);
 	checkRvalueOnLeft($1);
 	checkAssignOp($1, $3, $$);
     	}
@@ -198,7 +199,7 @@ Exp:
     | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec);checkMathOp($2, $2, $$);}
     | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
     | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); checkMathOp($1, $3, $$);}
-    | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType()); }
+    | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType($2->get_varType()); $$->set_assignable(1); }
     | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); checkBoolOp($2, $2, $$);}
     | ID LP Args RP {
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
@@ -210,18 +211,21 @@ Exp:
     	}
     | Exp LB Exp RB {
     	vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec);
+    	$$->set_assignable(1);
     	checkIndexType($1, $3);
     	checkArrayType($$, $1);
     	}
     | Exp DOT ID { 
-        vector<Node*> vec = {$1, $2, $3}; 
-        $$ = new Node("Exp", @$.first_line, vec); 
+        vector<Node*> vec = {$1, $2, $3};
+        $$ = new Node("Exp", @$.first_line, vec);
+        $$->set_assignable(1);
         $$->set_varType($3->get_varType());
         checkStructDot($$);
         }
     | ID { 
         vector<Node*> vec = {$1}; 
         $$ = new Node("Exp", @$.first_line, vec);
+        $$->set_assignable(1);
         checkVarDef($1, $$);
         }
     | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); $$->set_varType(new Type("", "int"));}

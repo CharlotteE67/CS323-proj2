@@ -35,6 +35,7 @@ private:
 
 public:
     vector <Node*> child;
+    bool assignable = false;
     Node();
 
     void print(int depth);
@@ -59,6 +60,7 @@ public:
     int get_lineNo(){return lineno;}
     Type* get_varType(){return varType;}
     void set_varType(Type *var){varType = var;}
+    void set_assignable(bool b) { assignable = b; }
 
 };
 
