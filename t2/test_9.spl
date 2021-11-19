@@ -1,0 +1,15 @@
+struct A {
+    int ia;
+};
+
+struct B{
+    float fb;
+    struct A ba;
+};
+
+int main(){
+    int i;
+    struct B b;
+    i.ia = 1;
+    b.ib = 1;
+}

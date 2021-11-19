@@ -618,7 +618,7 @@ void checkIndexType(Node *arr, Node *index) {
 
 /* arrayIndexOutOfBound, but only for INT */
 void checkIndexBound(Node *arr, Node *index) {
-    if (index->get_varType()->name == "") {
+    if (index->get_varType() == nullptr) {
         int actual_index = index->child[0]->get_intVal();
         int bound = arr->get_varType()->type.arr->size;
         if (actual_index >= bound) {

@@ -1,0 +1,16 @@
+int f1(int x, int y)
+{
+    return x + y;
+}
+int test_8(int i, int m, int n)
+{
+  int f2 = 10;
+  if (i == 0)
+  {
+    return f1(m, n);
+  }
+  else
+  {
+    return f2(m, n);
+  }
+}
