@@ -480,6 +480,10 @@ void checkStructDot(Node *exp) {
 //    }else{
 //
 //    }
+    if(base->category!=CATEGORY::STRUCTURE){
+        semanticErrors(13,exp->get_lineNo());
+        return;
+    }
     while(fl!= nullptr){
         if(fl->name==subName){
             exp->set_varType(symbolTable[subName]);
@@ -487,7 +491,7 @@ void checkStructDot(Node *exp) {
         }
         fl = fl->next;
     }
-    semanticErrors(13,exp->get_lineNo());
+    semanticErrors(14,exp->get_lineNo());
 }
 
 /* Exp -> ID LP Args RP | ID LP RP */
