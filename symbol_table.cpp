@@ -448,7 +448,7 @@ void funcDec(Node *exDef) {
 void checkVarDef(Node *id, Node *parent) {
     string name = id->get_name();
     if (symbolTable.count(name) == 0) {
-        semanticErrors(1, id->get_lineNo());
+        semanticErrors(1, id->get_lineNo(), name);
         // set null
         parent->set_varType(nullptr);
     } else if(symbolTable[name]->get_typePtr()!=nullptr){
@@ -627,7 +627,7 @@ void checkIndexBound(Node *arr, Node *index) {
         int bound = arr->get_varType()->type.arr->size;
         if (actual_index >= bound) {
 //            printf("Error at Line %d: Index Out Of Bound. %d out of limitation %d.\n", arr->get_lineNo(), actual_index, bound);
-            semanticErrors(22, arr->get_lineNo());
+            semanticErrors(22, arr->get_lineNo(), to_string(actual_index), to_string(bound));
         }
     }
 }
@@ -646,10 +646,10 @@ void checkArrayType(Node *root, Node *node) {
 //    root->set_varType(type->);
 }
 
-void semanticErrors(int typeID, int lineNo, string arg1 = "", string arg2 = "") {
+void semanticErrors(int typeID, int lineNo, string arg1, string arg2) {
     switch (typeID) {
         case 1:
-            printf("Error type 1 at Line %d: undefined variable.\n", lineNo);//done
+            printf("Error type 1 at Line %d: undefined variable %s.\n", lineNo, arg1.c_str());//done
             break;
         case 2:
             printf("Error type 2 at Line %d: undefined function.\n", lineNo);//done
@@ -701,7 +701,7 @@ void semanticErrors(int typeID, int lineNo, string arg1 = "", string arg2 = "") 
             printf("Error type 21 at Line %d: struct declare name misuse.\n", lineNo);//done
             break;
         case 22:
-            printf("Error type 22 at Line %d: Index Out Of Bound.\n", lineNo);
+            printf("Error type 22 at Line %d: Index Out Of Bound. %s out of limitation %s.\n", lineNo, arg1.c_str(), arg2.c_str());
         default:
             break;
     }

@@ -22,7 +22,7 @@ void checkFuncReturn(Node *extDef);
 
 void structDec(Node *def);
 
-void semanticErrors(int typeID, int lineNo);
+void semanticErrors(int typeID, int lineNo, string arg1 = "", string arg2 = "");
 
 bool isMatchedType(Type *t1, Type *t2);
 
