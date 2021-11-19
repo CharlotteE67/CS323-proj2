@@ -626,8 +626,8 @@ void checkIndexBound(Node *arr, Node *index) {
         int actual_index = index->child[0]->get_intVal();
         int bound = arr->get_varType()->type.arr->size;
         if (actual_index >= bound) {
-            printf("Error at Line %d: Index Out Of Bound. %d out of limitation %d.\n",
-                   arr->get_lineNo(), actual_index, bound);
+//            printf("Error at Line %d: Index Out Of Bound. %d out of limitation %d.\n", arr->get_lineNo(), actual_index, bound);
+            semanticErrors(22, arr->get_lineNo());
         }
     }
 }
@@ -646,7 +646,7 @@ void checkArrayType(Node *root, Node *node) {
 //    root->set_varType(type->);
 }
 
-void semanticErrors(int typeID, int lineNo) {
+void semanticErrors(int typeID, int lineNo, string arg1 = "", string arg2 = "") {
     switch (typeID) {
         case 1:
             printf("Error type 1 at Line %d: undefined variable.\n", lineNo);//done
@@ -700,6 +700,8 @@ void semanticErrors(int typeID, int lineNo) {
         case 21:
             printf("Error type 21 at Line %d: struct declare name misuse.\n", lineNo);//done
             break;
+        case 22:
+            printf("Error type 22 at Line %d: Index Out Of Bound.\n", lineNo);
         default:
             break;
     }
