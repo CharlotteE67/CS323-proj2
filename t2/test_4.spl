@@ -11,7 +11,7 @@ int main(){
     struct A sa;
     struct B sb;
 
-    sa.a = sb.b;
+    sa.a = sb.c;
     sb.c = sb.c + sb.n;
     sa.b = sb;
 
