@@ -1,0 +1,11 @@
+int test1(int x,float y){
+    float x = 0.25;
+}
+
+int test1(char z){
+    return 0;
+}
+
+int main(){
+
+}

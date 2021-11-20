@@ -1,0 +1,19 @@
+int get_int(){
+    return 0;
+}
+
+float get_float(){
+    return -1.0;
+}
+
+int main(){
+    int x,y;
+    float a,b;
+
+    x = get_int();
+    get_float() = y;
+    b = get_int();
+
+    x = a;
+
+}

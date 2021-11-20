@@ -1,0 +1,18 @@
+struct A{
+    int a;
+    float m;
+    struct B{
+        int c;
+        char n;
+    }b;
+};
+
+int main(){
+    struct A sa;
+    struct B sb;
+
+    sa.a = sb.b;
+    sb.c = sb.c + sb.n;
+    sa.b = sb;
+
+}

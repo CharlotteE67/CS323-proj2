@@ -1,0 +1,4 @@
+int main(){
+    float a;
+    a = test_func(b);
+}
