@@ -508,7 +508,12 @@ void checkFuncCall(Node *root, Node *id, Node *args) {
     }
     root->set_varType(symbolTable[id->get_name()]->typePointer);
 
-    FieldList *f1 = symbolTable[id->get_name()]->get_argsList(), *f2 = getFunCallArgs(args);
+    FieldList *f1 = symbolTable[id->get_name()]->get_argsList(), *f2;
+    if (args == nullptr) {
+        f2 = nullptr;
+    } else {
+        f2 = getFunCallArgs(args);
+    }
     Type t1(id->get_name(), CATEGORY::STRUCTURE), t2(id->get_name(), CATEGORY::STRUCTURE);
     t1.set_fieldList(f1), t2.set_fieldList(f2);
 
