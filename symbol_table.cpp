@@ -552,7 +552,7 @@ void checkRvalueOnLeft(Node *left) {
 
 /* Exp -> Exp ASSIGN Exp */
 void checkAssignOp(Node *left, Node *right, Node *parent) {
-    if (left->get_varType() == nullptr || right->get_varType() == nullptr) {
+    if (left->get_varType() == nullptr || right->get_varType() == nullptr || !left->assignable) {
         parent->set_varType(nullptr);
         return;
     }
