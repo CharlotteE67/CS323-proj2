@@ -60,30 +60,26 @@ public:
 
 ​													Figure.2 Call `semanticErrors()` in function
 
-![image-20211121142616176](SID-Project2.assets/image-20211121142616176.png)
-
-​													Figure.3  `semanticErrors()`  function
-
 ### 	C. Other Key Points
 
   1. We modified `spl_node.hpp` and add a field named `assignable` which is set to `false` initially to record whether a node can be assigned or not. It's mainly used in `Exp` syntax and only `Exp -> Exp LB Exp RB | ID `  can be directly assigned. Considering continuous assign, expression with parentheses and structure with DOT, `Exp -> Exp ASSIGN Exp | LP Exp RP | Exp DOT ID` can be assign with the judgement of the first `Exp`'s assignable.
 
      ![image-20211121142416354](SID-Project2.assets/image-20211121142416354.png)
 
-     ​													Figure.4  set_assignable()																				
+     ​													Figure.3  set_assignable()																				
 
   2. In SPL_Type, we define `STRUCTURE`, `STRUCTVAR` and `FUNCTION` to represent the category for structure type, structure's field type and function type. 
 
      Also, the field `Type *typePointer = nullptr;` in Type is used for function and structure which store their return type and nearest out-layer struct when needed.
 
-  3. **When facing error, especially in `Exp` syntax, we will try to ignore it as detecting other type of error. For example, if there are INT and FLOAT variables to be added and assigned to a INT variable, then the right side's varType will be nullptr. When checking ASSIGN, it will ignore the error and directly return as receiving nullptr. What' more, if left side is not assignable, we will also return directly and ignore type check between two side of ASSIGN.** 
+  3. **When facing error, especially in `Exp` syntax, we will try to ignore it as detecting other type of error. For example, if there are INT and FLOAT variables to be added and assigned to a INT variable, then the right side's varType will be nullptr. When checking ASSIGN, it will ignore the error and directly return as receiving nullptr. What' more, if left side is not assignable, we will also return directly and ignore type check between two side of ASSIGN.** e.g. (Official test cases) In `test_2_r07.spl`  line 10, since we detect ***type 7*** error in right side, we set the varType as nullptr for right side and ignore type check at ASSIGN. Similarly for `test_2_r12.spl` line 15, `test_2_r14.spl`  line 10 & 12,  the left side of ASSIGN has nullptr for varType. 
 
 ### D. Bonus
 
 1. When using INT(not ID) to access array, we can detect whether it's out of bound. ***Type 22*** is defined for it. (shown in Figure.2)
 
-  		2. Considering continuous assign, expression with parentheses for type 6 error, using `assignable` field in Node to recursively record the node information about assignable. (shown in Figure.4)
-  		3. When accessing inside number of struct, the complier should detect it as error according to CATEGORY::STURCTVAR. ***Type 20*** is defined for reporting the error. Also, structure declare name misuse will be detect as ***Type 21*** error.
+2. Considering continuous assign, expression with parentheses for type 6 error, using `assignable` field in Node to recursively record the node information about assignable. (shown https://github.com/CharlotteE67/CS323-proj2.git Figure.4)
+3. When accessing inside number of struct, the complier should detect it as error according to CATEGORY::STURCTVAR. ***Type 20*** is defined for reporting the error. Also, structure declare name misuse will be detect as ***Type 21*** error.
 
 
 
