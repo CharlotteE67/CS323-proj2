@@ -1,0 +1,12 @@
+struct test{
+    int x,y;
+};
+
+int main(){
+    struct test t;
+    int a,b;
+
+    t.x = a;
+    y = a-b;
+
+}

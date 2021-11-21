@@ -14,6 +14,6 @@ int main(){
     get_float() = y;
     b = get_int();
 
-    x = a;
+    x = a = y;
 
 }

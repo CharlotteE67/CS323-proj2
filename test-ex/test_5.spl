@@ -1,0 +1,15 @@
+struct a {
+    int aa;
+};
+struct b{
+    struct a ba;
+};
+struct c{
+    struct a ca;
+};
+int main(){
+    struct b B;
+    struct c C;
+    b.ba = C.ca;
+
+}
