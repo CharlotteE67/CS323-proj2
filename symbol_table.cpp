@@ -486,7 +486,13 @@ void checkStructDot(Node *exp) {
     }
     while(fl!= nullptr){
         if(fl->name==subName){
-            exp->set_varType(symbolTable[subName]);
+            if(fl->type->category == CATEGORY::STRUCTVAR){
+                exp->set_varType(symbolTable[subName]->get_structType());
+            }
+            else{
+                exp->set_varType(symbolTable[subName]);
+            }
+
             return;
         }
         fl = fl->next;
