@@ -68,7 +68,7 @@ public:
 
      ​													Figure.3  set_assignable()																				
 
-  2. In SPL_Type, we define `STRUCTURE`, `STRUCTVAR` and `FUNCTION` to represent the category for structure type, structure's field type and function type. 
+  2. In SPL_Type, we define `STRUCTURE`, `STRUCTVAR` and `FUNCTION` to represent the category for structure type, structure's instance type and function type. For example, `struct b{ struct a ba;};` **b** is `STRUCTURE` and **ba** is `STRUCTVAR`.
 
      Also, the field `Type *typePointer = nullptr;` in Type is used for function and structure which store their return type and nearest out-layer struct when needed.
 
@@ -77,17 +77,15 @@ public:
 ### D. Bonus
 
 1. When using INT(not ID) to access array, we can detect whether it's out of bound. ***Type 22*** is defined for it. (shown in Figure.2)
-
 2. Considering continuous assign, expression with parentheses for type 6 error, using `assignable` field in Node to recursively record the node information about assignable. (shown https://github.com/CharlotteE67/CS323-proj2.git Figure.4)
 3. When accessing inside number of struct, the complier should detect it as error according to CATEGORY::STURCTVAR. ***Type 20*** is defined for reporting the error. Also, structure declare name misuse will be detect as ***Type 21*** error.
-
-
+3. Besides, we can check equivalence between structures. For example, `struct A{ int barrr[8]; }` and `struct B { int carrr[8]}` are considered equivalent and assignable.
 
 ## III. Test Cases
 
 ​			For evaluation purpose, our test cases contain **14** different semantic errors. All of test cases are saved in `./test/` folder.
 
-​			For extra test cases, we put them in `./test-ex/` folder which contains four test cases. They are used for checking ***type 20, 21, 22*** error.
+​			For extra test cases, we put them in `./test-ex/` folder which contains four test cases. They are used for checking ***type 20, 21, 22*** error and structure equivalence.
 
 ​			**- Test case with Type 21 error**
 
