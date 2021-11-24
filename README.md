@@ -1,2 +1,2 @@
-# cs323-proj1
-2021F-cs323-project1
+# cs323-proj2
+2021F-cs323-project2
